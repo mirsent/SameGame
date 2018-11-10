@@ -1,0 +1,37 @@
+
+.content {
+  padding-top: calc(25px + 88rpx);
+}
+.logo {
+  width: 230rpx;
+}
+.input-view {
+  padding: 50rpx 50rpx 80rpx 50rpx;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+.input-view .label {
+  font-size: 32rpx;
+  color: #808080;
+}
+.input-view .input {
+  width: 100%;
+  font-size: 42rpx;
+  margin-bottom: 30rpx;
+  border-bottom: 5rpx solid #E63030;
+}
+.input-view .input:-ms-input-placeholder {
+  color: #808080;
+}
+.link-view {
+  font-size: 32rpx;
+  color: #808080;
+  line-height: 2.5em;
+}
+.link-view .link {
+  color: #E63030;
+}
+.link-view .link {
+  margin: 0 10rpx;
+}

@@ -1,0 +1,85 @@
+{
+    "pages" : [
+        {
+            "path" : "pages/main/main",
+            "style" : {
+                "navigationBarTitleText" : "登录模板"
+            }
+        },
+        {
+            "path" : "pages/login/login",
+            "style" : {
+                "navigationBarTitleText" : "登录"
+            }
+        },
+        {
+            "path" : "pages/reg/reg",
+            "style" : {
+                "navigationBarTitleText" : "注册"
+            }
+        },
+        {
+            "path" : "pages/pwd/pwd",
+            "style" : {
+                "navigationBarTitleText" : "找回密码"
+            }
+        },
+        {
+            "path" : "pages/user/user",
+            "style" : {
+                "navigationBarTitleText" : "我的"
+            }
+        },
+        {
+            "path" : "pages/index/index",
+            "style" : {}
+        },
+        {
+            "path" : "pages/team/team",
+            "style" : {}
+        }
+    ],
+    "condition" : {
+        "current" : 0,
+        "list" : [
+            {
+                "name" : "index",
+                "path" : "pages/index/index"
+            },
+            {
+                "name" : "login",
+                "path" : "pages/login/login"
+            },
+            {
+                "name" : "reg",
+                "path" : "pages/reg/reg"
+            },
+            {
+                "name" : "team",
+                "path" : "pages/team/team"
+            }
+        ]
+    },
+    "tabBar" : {
+        "color" : "#7a7e83",
+        "selectedColor" : "#0faeff",
+        "backgroundColor" : "#ffffff",
+        "list" : [
+            {
+                "pagePath" : "pages/main/main",
+                "text" : "首页",
+                "iconPath" : "static/img/home.png",
+                "selectedIconPath" : "static/img/homeHL.png"
+            },
+            {
+                "pagePath" : "pages/user/user",
+                "text" : "我的",
+                "iconPath" : "static/img/user.png",
+                "selectedIconPath" : "static/img/userHL.png"
+            }
+        ]
+    },
+    "globalStyle" : {
+        "navigationStyle" : "custom"
+    }
+}

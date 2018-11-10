@@ -1,0 +1,38 @@
+.content{
+    padding-top: calc(var(--status-bar-height) + 88px);
+}
+    
+.logo {
+	width: 230upx;
+}
+
+.input-view {
+	padding: 50upx 50upx 80upx 50upx;
+	justify-content: flex-end;
+}
+
+.input-view .label {
+	font-size: 32upx;
+	color: #808080;
+}
+
+.input-view .input {
+	width: 100%;
+	font-size: 42upx;
+	margin-bottom: 30upx;
+	border-bottom: 5px solid #E63030;
+}
+
+.input-view .input:-ms-input-placeholder {
+	color: #808080;
+}
+
+.link-view {
+	font-size: 32upx;
+	color: #808080;
+	line-height: 2.5em;
+}
+
+.link-view .link {
+	color: #E63030;
+}
