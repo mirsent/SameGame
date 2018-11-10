@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App'
 
+Vue.prototype.$requestUrl = 'https://wx.ineinv.com/index.php/Home/SameGame/';
+
 import store from './store'
 
 Vue.config.productionTip = false
