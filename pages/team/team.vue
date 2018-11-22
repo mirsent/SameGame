@@ -3,7 +3,7 @@
         <uniStatusBar></uniStatusBar>
         
         <view class="brand-view">
-        	<image src="../../static/img/brand.png" class="brand"></image>
+        	<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
         </view>
         
         <view class="team-view">
@@ -22,7 +22,7 @@
         					</view>
         				</view>
         				<view class="right">
-        					<image src="../../static/img/logo_s.png"></image>
+        					<image src="../../static/img/logo_s.png" mode="widthFix"></image>
         				</view>
         			</view>
         		</view>
@@ -39,7 +39,7 @@
         					</view>
         				</view>
         				<view class="right">
-        					<image src="../../static/img/logo_s.png"></image>
+        					<image src="../../static/img/logo_s.png" mode="widthFix"></image>
         				</view>
         			</view>
         		</view>
@@ -53,7 +53,7 @@
         					<view class="title uni-ellipsis">创建新城堡</view>
         				</view>
         				<view class="right">
-        					<image src="../../static/img/logo_s.png"></image>
+        					<image src="../../static/img/logo_s.png" mode="widthFix"></image>
         				</view>
         			</view>
         		</view>
@@ -100,11 +100,11 @@
         color: #E63030;
     }
     .team-view .team{
-        margin: 60upx 0;
+        margin: 80upx 0;
     }
     
     .team-item{
-        height: 200upx;
+        height: 180upx;
         margin-bottom: 30px;
         color: #FFF;
         display: flex;
@@ -114,7 +114,7 @@
         flex: 1;
     }
     .icon .top{
-        height: 120upx;
+        height: 110upx;
         background-color: #666;
         display: flex;
         justify-content: center;
@@ -139,7 +139,7 @@
         background-color: #06B4C7;
     }
     .icon .bottom{
-        height: 80upx;
+        height: 70upx;
         background-color: #CCC;
     }
     .team-item.on .icon .bottom{
@@ -174,7 +174,6 @@
     }
     .name .right image{
         width: 80upx;
-        height: 70upx;
     }
     
     .btn-primary{

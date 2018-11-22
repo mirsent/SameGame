@@ -5,6 +5,11 @@
 	src: url('https://img-cdn-qiniu.dcloud.net.cn/fonts/uni.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'iconfont';
+    src: url('https://at.alicdn.com/t/font_874878_zshb43o6rbh.ttf') format('truetype');
+}
+
 
 
 
@@ -285,7 +290,7 @@
 	flex-direction: column;
 }
 
-.uni-list:after {
+/* .uni-list:after {
 	position: absolute;
 	z-index: 10;
 	right: 0;
@@ -309,7 +314,7 @@
 	-webkit-transform: scaleY(.5);
 	transform: scaleY(.5);
 	background-color: #c8c7cc;
-}
+} */
 
 .uni-list-cell {
 	position: relative;

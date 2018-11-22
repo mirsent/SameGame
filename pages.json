@@ -37,6 +37,14 @@
         {
             "path" : "pages/team/team",
             "style" : {}
+        },
+        {
+            "path" : "pages/task/task",
+            "style" : {
+                "usingComponents": {
+                    "switch": "/wxcomponents/switch/index"
+                }
+            }
         }
     ],
     "condition" : {
@@ -57,6 +65,10 @@
             {
                 "name" : "team",
                 "path" : "pages/team/team"
+            },
+            {
+                "name" : "task",
+                "path" : "pages/task/task"
             }
         ]
     },

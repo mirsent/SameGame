@@ -141,7 +141,6 @@
 
 	.brand-view .brand {
 		margin-left: 30upx;
-		width: 480upx;
-		height: 60upx;
+		width: 460upx;
 	}
 </style>
