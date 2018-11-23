@@ -64,6 +64,7 @@
 </template>
 
 <script>
+    import service from '../../service.js';
     import uniStatusBar from '../../components/uni-status-bar.vue'
     import uniIcon from '../../components/uni-icon.vue'
     
@@ -76,7 +77,11 @@
 			return {
 
 			};
-		}
+		},
+        onLoad(e) {
+        	let memberInfo = service.getUsers();
+            console.log(memberInfo);
+        }
 	}
 </script>
 

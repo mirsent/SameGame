@@ -7,8 +7,8 @@
         <view class="input-view col-2">
             <view class="col-1">
                 <view class="label">{{labelText}}</view>
-                <input type="text" value="" placeholder="电子邮箱" class="input" />
-                <button class="btn-primary">继续</button>
+                <input type="text" value="" placeholder="电子邮箱" class="input" @blur="mailChange"/>
+                <button class="btn-primary" @tap="check">继续</button>
             </view>
         </view>
         
@@ -20,8 +20,40 @@
 		data() {
 			return {
 				labelText: '免费注册或登录',
+                mail: ''
 			};
-		}
+		},
+        methods: {
+            mailChange(e) {
+                this.mail = e.detail.value
+            },
+            check() {
+                uni.showLoading();
+                uni.request({
+                	url: this.$requestUrl+'Login/check_email',
+                	method: 'GET',
+                	data: {
+                        mail: this.mail
+                    },
+                	success: res => {
+                        let detail = {
+                        	mail: this.mail
+                        }
+                        if (res.data.status == 1) {
+                        	uni.navigateTo({
+                        		url: "../login/login?detailData=" + JSON.stringify(detail)
+                        	})
+                        } else {
+                            uni.navigateTo({
+                            	url: "../reg/reg?detailData=" + JSON.stringify(detail)
+                            })
+                        }
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            }
+        }
 	}
 </script>
 

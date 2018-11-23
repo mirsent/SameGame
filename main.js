@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 
-Vue.prototype.$requestUrl = 'https://wx.ineinv.com/index.php/Home/SameGame/';
+Vue.prototype.$requestUrl = 'http://samegame.ineinv.com/index.php/Home/';
 
 import store from './store'
 

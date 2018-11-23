@@ -9,7 +9,10 @@
         {
             "path" : "pages/login/login",
             "style" : {
-                "navigationBarTitleText" : "登录"
+                "navigationBarTitleText" : "登录",
+                "usingComponents" : {
+                	"toast" : "/wxcomponents/toast/index"
+                }
             }
         },
         {
@@ -41,8 +44,17 @@
         {
             "path" : "pages/task/task",
             "style" : {
-                "usingComponents": {
-                    "switch": "/wxcomponents/switch/index"
+                "usingComponents" : {
+                    "switch" : "/wxcomponents/switch/index",
+                    "rate" : "/wxcomponents/rate/index"
+                }
+            }
+        },
+        {
+            "path" : "pages/hall/hall",
+            "style" : {
+                "usingComponents" : {
+                	"rate" : "/wxcomponents/rate/index"
                 }
             }
         }
@@ -56,7 +68,8 @@
             },
             {
                 "name" : "login",
-                "path" : "pages/login/login"
+                "path" : "pages/login/login",
+                "query": "detailData={\"mail\":\"8062@qq.com\"}"
             },
             {
                 "name" : "reg",
@@ -69,6 +82,10 @@
             {
                 "name" : "task",
                 "path" : "pages/task/task"
+            },
+            {
+                "name" : "hall",
+                "path" : "pages/hall/hall"
             }
         ]
     },

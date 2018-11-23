@@ -36,7 +36,7 @@
 		line-height: 1;
 		display: inline-block;
 		padding: 12px 34px;
-		color: #333;
+		color: #3B4752;
 		border-radius: 100px;
 	}
     .uni-badge.round,.uni-badge-default.round{
