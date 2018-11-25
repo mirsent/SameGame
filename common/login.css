@@ -17,8 +17,9 @@
 }
 
 .input-view .input {
-	width: 100%;
 	font-size: 42upx;
+	width: 100%;
+    padding-bottom: 8px;
 	margin-bottom: 30upx;
 	border-bottom: 5px solid #E63030;
 }

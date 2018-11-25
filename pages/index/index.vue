@@ -28,6 +28,15 @@
                 this.mail = e.detail.value
             },
             check() {
+                
+                if (this.mail.length < 3 || !~this.mail.indexOf('@')) {
+                	uni.showToast({
+                		icon: 'none',
+                		title: '邮箱地址不合法'
+                	});
+                	return;
+                }
+                
                 uni.showLoading();
                 uni.request({
                 	url: this.$requestUrl+'Login/check_email',

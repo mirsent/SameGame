@@ -9,16 +9,18 @@
         <view class="team-view">
         	<view class="label">选择您要继续游戏的<text>城堡</text></view>
         	<view class="team">
-        		<view class="team-item on">
+        		<view class="team-item" 
+                    v-for="(team, index) in teamData" :key="index"
+                    :class="index==0?'on':''">
         			<view class="icon">
         				<view class="top"></view>
         				<view class="bottom"></view>
         			</view>
         			<view class="name uni-flex">
         				<view class="left">
-        					<view class="title uni-ellipsis">艾泽拉斯天空之fdfdf城</view>
+        					<view class="title uni-ellipsis">{{team.team_name}}</view>
         					<view class="brief">
-        						城堡运行了<text>366 </text>天
+        						城堡运行了<text>{{team.days}} </text>天
         					</view>
         				</view>
         				<view class="right">
@@ -26,24 +28,7 @@
         				</view>
         			</view>
         		</view>
-        		<view class="team-item">
-        			<view class="icon">
-        				<view class="top"></view>
-        				<view class="bottom"></view>
-        			</view>
-        			<view class="name uni-flex">
-        				<view class="left">
-        					<view class="title uni-ellipsis">艾泽拉斯天空之城</view>
-        					<view class="brief">
-        						城堡运行了<text>366 </text>天
-        					</view>
-        				</view>
-        				<view class="right">
-        					<image src="../../static/img/logo_s.png" mode="widthFix"></image>
-        				</view>
-        			</view>
-        		</view>
-        		<view class="team-item">
+        		<view class="team-item" v-if="teamData.length < 3">
         			<view class="icon">
         				<view class="top"></view>
         				<view class="bottom"></view>
@@ -58,7 +43,7 @@
         			</view>
         		</view>
         	</view>
-        	<button class="btn-primary">继续游戏</button>
+        	<button class="btn-primary" @tap="goTask">继续游戏</button>
         </view>
 	</view>
 </template>
@@ -75,12 +60,53 @@
         },
 		data() {
 			return {
-
+                memberId: '',
+                teamOnUid: '',
+                teamData: []
 			};
 		},
         onLoad(e) {
         	let memberInfo = service.getUsers();
-            console.log(memberInfo);
+            this.memberId = memberInfo.id;
+            this.get_teams();
+        },
+        methods: {
+            get_teams() {
+                uni.showLoading();
+                uni.request({
+                	url: this.$requestUrl+'Team/get_team_join_list',
+                	method: 'GET',
+                	data: {
+                        member_id: this.memberId
+                    },
+                	success: res => {
+                        let teamInfo = res.data.data;
+                        this.teamOnUid = teamInfo[0]['team_uuid'];
+                        this.teamData = teamInfo;
+                    },
+                	fail: () => {},
+                	complete: () => {
+                        uni.hideLoading();
+                    }
+                });
+            },
+            goTask() {
+                
+                if (this.teamData.length < 1) {
+                	uni.showToast({
+                		icon: 'none',
+                		title: '还没有城堡'
+                	});
+                	return;
+                }
+                
+                let detail = {
+                	teamuuid: this.teamOnUid
+                }
+                uni.navigateTo({
+                	url: "../task/task?detailData=" + JSON.stringify(detail)
+                })
+            }
         }
 	}
 </script>

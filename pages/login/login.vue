@@ -30,6 +30,10 @@
                 password: ''
             }
         },
+        onLoad(e) {
+        	let info = JSON.parse(e.detailData);
+        	this.mail = info.mail;
+        },
         methods: {
             mailChange(e) {
                 this.mail = e.detail.value
@@ -50,8 +54,12 @@
                         password: this.password
                     },
                 	success: res => {
-                        console.log(res);
                         if (res.data.status == 1) {
+                            uni.showToast({
+                            	title: '登录成功',
+                            	mask: false,
+                            	duration: 1500
+                            });
                         	service.addUser(res.data.data);
                             uni.navigateTo({
                             	url: "../team/team"
@@ -71,10 +79,6 @@
                     }
                 });
             }
-        },
-        onLoad(e) {
-            let info = JSON.parse(e.detailData);
-            this.mail = info.mail;
         }
     }
 </script>

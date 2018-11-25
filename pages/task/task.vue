@@ -46,7 +46,7 @@
 			</view>
 			<view class="uni-card">
 				<view class="uni-list">
-					<block v-for="(list,index) in todayData" :key="index">
+					<block v-for="(list,index) in todayData.list" :key="index">
 						<view class="uni-list-cell uni-collapse">
                             
 							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
@@ -76,17 +76,66 @@
                             </view>
                             
                             <view class="switch-box" :class="list.show ? 'bottom' : ''">
-                            	<Switch :value="list.is_finish" :oid="list.id" @change="change"></Switch>
+                            	<Switch :value="list.is_finish" :oid="list.id" @change="finish"></Switch>
                             </view>
 						</view>
 					</block>
 				</view>
 			</view>
 		</view>
+        
+        <view class="task">
+        	<view class="task-header">
+        		<view class="header-title">其他任务</view>
+        		<uni-badge text="3" round type="warning"></uni-badge>
+        		<view class="header-progress">
+        			<progress percent="20" stroke-width="20" color="#F8D053" />
+        		</view>
+        	</view>
+        	<view class="uni-card">
+        		<view class="uni-list">
+        			<block v-for="(list,index) in otherData.list" :key="index">
+        				<view class="uni-list-cell uni-collapse">
+        					
+        					<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerOtherCollapse(index)">
+        						<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">{{list.task_name}}</view>
+        						<view class="task-deadline">{{list.deadline_date}}</view>
+        						<view class="badge-box" v-show="list.show">
+        							<uni-badge text="进行" square type="info"></uni-badge>
+        						</view>
+        					</view>
+        					
+        					<view class="uni-collapse-content" :class="list.show ? 'uni-active' : ''">
+        						{{list.task_desc}}
+        					</view>
+        					
+        					<view class="uni-collapse-footer" :class="list.show ? 'uni-active' : ''">
+        						<view class="badge-box">
+        							<uni-badge text="big tag" type="warning"></uni-badge>
+        							<uni-badge text="big big tag" type="danger"></uni-badge>
+        							<uni-badge text="big tag"></uni-badge>
+        						</view>
+        						<view class="rate-box">
+        							<Rate 
+        								disabled = true
+        								:value="list.starIndex4">
+        							</Rate>
+        						</view>
+        					</view>
+        					
+        					<view class="switch-box" :class="list.show ? 'bottom' : ''">
+        						<Switch :value="list.is_finish" :oid="list.id" @change="finish"></Switch>
+        					</view>
+        				</view>
+        			</block>
+        		</view>
+        	</view>
+        </view>
 	</view>
 </template>
 
 <script>
+    import service from '../../service.js';
 	import uniStatusBar from '../../components/uni-status-bar.vue';
 	import uniBadge from '../../components/uni-badge.vue';
 
@@ -97,6 +146,8 @@
 		},
 		data() {
 			return {
+                memberId: '',
+                teamuuid: '',
 				todayData: [
                     {
                         id: 1,
@@ -104,33 +155,78 @@
                         show: true,
                         is_finish: true,
                         starIndex4: 4
-                    },
-                    {
-                        id: 2,
-                        title: '放得开的积分尽快了解了',
-                        show: false,
-                        is_finish: true,
-                        starIndex4: 4
                     }
-                ]
+                ],
+                otherData: []
 			};
 		},
+        onLoad(e) {
+        	let memberInfo = service.getUsers();
+        	this.memberId = memberInfo.id;
+            
+            let info = JSON.parse(e.detailData);
+            this.teamuuid = info.teamuuid;
+            
+            this.get_today_task();
+            this.get_other_task();
+        },
 		methods: {
-            change(e){
+            finish(e){
                 let detail = e.detail;
                 let eventid = e.currentTarget.dataset.eventid;
                 let index = eventid.substring(eventid.lastIndexOf("-") + 1, eventid.length);
                 this.todayData[index].is_finish = detail.value;
             },
 			trigerCollapse(e) {
-				for (let i = 0, len = this.todayData.length; i < len; ++i) {
+				for (let i = 0, len = this.todayData.list.length; i < len; ++i) {
 					if (e === i) {
-						this.todayData[i].show = !this.todayData[i].show;
+						this.todayData.list[i].show = !this.todayData[i].show;
 					} else {
-						this.todayData[i].show = false;
+						this.todayData.list[i].show = false;
 					}
 				}
-			}
+			},
+			trigerOtherCollapse(e) {
+				for (let i = 0, len = this.otherData.list.length; i < len; ++i) {
+					if (e === i) {
+						this.otherData.list[i].show = !this.otherData[i].show;
+					} else {
+						this.otherData.list[i].show = false;
+					}
+				}
+			},
+            get_today_task(){
+                uni.request({
+                	url: this.$requestUrl+'Task/get_task_today_list',
+                	method: 'GET',
+                	data: {
+                        team_uuid: this.teamuuid,
+						task_executive_id: this.memberId
+                    },
+                	success: res => {
+                        console.log(res.data.data);
+                        this.todayData = res.data.data;
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
+            get_other_task(){
+                uni.request({
+                	url: this.$requestUrl+'Task/get_task_other_list',
+                	method: 'GET',
+                	data: {
+                		team_uuid: this.teamuuid,
+                		task_executive_id: this.memberId
+                	},
+                	success: res => {
+                		console.log(res.data.data);
+                        this.otherData = res.data.data;
+                	},
+                	fail: () => {},
+                	complete: () => {}
+                });
+            }
 		}
 	}
 </script>

@@ -9,10 +9,7 @@
         {
             "path" : "pages/login/login",
             "style" : {
-                "navigationBarTitleText" : "登录",
-                "usingComponents" : {
-                	"toast" : "/wxcomponents/toast/index"
-                }
+                "navigationBarTitleText" : "登录"
             }
         },
         {
