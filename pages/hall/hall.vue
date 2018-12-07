@@ -22,12 +22,12 @@
 		<view class="task">
 			<view class="uni-card">
 				<view class="uni-list">
-					<block v-for="(list,index) in todayData" :key="index">
+					<block v-for="(list,index) in taskData" :key="index">
 						<view class="uni-list-cell uni-collapse">
                             
 							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
-								<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">放大镜看风景放大镜看风景放大镜看风景</view>
-								<view class="task-deadline">12/11</view>
+								<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">{{list.task_name}}</view>
+								<view class="task-deadline">{{list.deadline_date}}</view>
                                 <view class="badge-box" v-show="list.show">
                                 	<uni-badge text="进行" square type="info"></uni-badge>
                                 </view>
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	import uniStatusBar from '../../components/uni-status-bar.vue';
 	import uniBadge from '../../components/uni-badge.vue';
 
@@ -77,37 +78,46 @@
 		},
 		data() {
 			return {
-				todayData: [
-                    {
-                        id: 1,
-                        title: '荆防颗粒点击放大',
-                        show: true,
-                        is_finish: true,
-                        starIndex4: 4
-                    },
-                    {
-                        id: 2,
-                        title: '放得开的积分尽快了解了',
-                        show: false,
-                        is_finish: true,
-                        starIndex4: 4
-                    }
-                ]
+                memberId: '',
+                teamuuid: '',
+				taskData: []
 			};
 		},
+        onLoad() {
+            let memberInfo = service.getUsers();
+            this.memberId = memberInfo.id;
+            this.teamuuid = service.getTeam();
+            
+        	this.get_task();
+        },
 		methods: {
+            get_task(){
+                uni.request({
+                	url: this.$requestUrl+'Task/get_task_hall',
+                	method: 'GET',
+                	data: {
+                        team_uuid: this.teamuuid
+                    },
+                	success: res => {
+                        console.log(res.data.data);
+                        this.taskData = res.data.data;
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
             change(e){
                 let detail = e.detail;
                 let eventid = e.currentTarget.dataset.eventid;
                 let index = eventid.substring(eventid.lastIndexOf("-") + 1, eventid.length);
-                this.todayData[index].is_finish = detail.value;
+                this.taskData[index].is_finish = detail.value;
             },
 			trigerCollapse(e) {
-				for (let i = 0, len = this.todayData.length; i < len; ++i) {
+				for (let i = 0, len = this.taskData.length; i < len; ++i) {
 					if (e === i) {
-						this.todayData[i].show = !this.todayData[i].show;
+						this.taskData[i].show = !this.taskData[i].show;
 					} else {
-						this.todayData[i].show = false;
+						this.taskData[i].show = false;
 					}
 				}
 			}

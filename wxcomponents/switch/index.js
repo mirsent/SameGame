@@ -9,6 +9,14 @@ Component({
             type : Number,
             value : ''
         },
+        oindex : {
+            type : Number,
+            value : ''
+        },
+        otype : {
+            type : String,
+            value : ''
+        },
         //large small default
         size : {
             type : String,
@@ -36,7 +44,9 @@ Component({
             const value = data.value ? false : true;
             this.triggerEvent('change',{
                 value : value,
-                oid: data.oid
+                oid: data.oid,
+                oindex: data.oindex,
+                otype: data.otype
             })
         }
     }

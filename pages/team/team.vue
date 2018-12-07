@@ -100,11 +100,12 @@
                 	return;
                 }
                 
-                let detail = {
-                	teamuuid: this.teamOnUid
-                }
+//                 let detail = {
+//                 	teamuuid: this.teamOnUid
+//                 }
+                service.addTeam(this.teamOnUid);
                 uni.navigateTo({
-                	url: "../task/task?detailData=" + JSON.stringify(detail)
+                	url: "../task/task"
                 })
             }
         }

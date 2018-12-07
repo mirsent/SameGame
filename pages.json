@@ -78,7 +78,8 @@
             },
             {
                 "name" : "task",
-                "path" : "pages/task/task"
+                "path" : "pages/task/task",
+                "query": "detailData={\"teamuuid\":\"3f3cbce1ed2f7f2fe4fb34c9913e92f0\"}"
             },
             {
                 "name" : "hall",

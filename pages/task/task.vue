@@ -7,7 +7,7 @@
 		</view>
 
 		<view class="role">
-
+        
 		</view>
 
 		<view class="label">
@@ -36,32 +36,33 @@
 			<image src="../../static/img/close.png" mode="widthFix" class="notice-icon"></image>
 		</view>
 
-		<view class="task">
-			<view class="task-header">
-				<view class="header-title">今日任务</view>
-				<uni-badge text="3" round type="warning"></uni-badge>
+		<view class="task" v-for="(item, type) in taskData" :key="type">
+			<view class="task-header" v-show="item.list.length">
+				<view class="header-title">{{item.title}}</view>
+				<uni-badge :text="item.number_all" round type="warning"></uni-badge>
 				<view class="header-progress">
-					<progress percent="20" stroke-width="20" color="#F8D053" />
+					<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
 				</view>
 			</view>
 			<view class="uni-card">
 				<view class="uni-list">
-					<block v-for="(list,index) in todayData.list" :key="index">
+					<block v-for="(task,index) in item.list" :key="index">
 						<view class="uni-list-cell uni-collapse">
                             
-							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
-								<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">放大镜看风景放大镜看风景放大镜看风景</view>
-								<view class="task-deadline">12/11</view>
-                                <view class="badge-box" v-show="list.show">
-                                	<uni-badge text="进行" square type="info"></uni-badge>
+							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(type,index)">
+								<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
+								<view class="task-deadline">{{task.deadline_date}}</view>
+                                <view class="badge-box" v-show="task.show">
+                                	<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
+                                	<view v-show="task.is_finish"><uni-badge text="完成" square type="warning"></uni-badge></view>
                                 </view>
 							</view>
                             
-							<view class="uni-collapse-content" :class="list.show ? 'uni-active' : ''">
-								即可来得及付款链接打开链接付款了大家辅导费地方点击付款进度款
+							<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
+								{{task.task_desc}}
 							</view>
                             
-                            <view class="uni-collapse-footer" :class="list.show ? 'uni-active' : ''">
+                            <view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
                                 <view class="badge-box">
                                 	<uni-badge text="big tag" type="warning"></uni-badge>
                                 	<uni-badge text="big big tag" type="danger"></uni-badge>
@@ -70,67 +71,19 @@
                                 <view class="rate-box">
                                 	<Rate 
                                         disabled = true
-                                        :value="list.starIndex4">
+                                        :value="task.difficult">
                                     </Rate>
                                 </view>
                             </view>
                             
-                            <view class="switch-box" :class="list.show ? 'bottom' : ''">
-                            	<Switch :value="list.is_finish" :oid="list.id" @change="finish"></Switch>
+                            <view class="switch-box" :class="task.show ? 'bottom' : ''">
+                            	<Switch :value="task.is_finish" :oid="task.id" :otype="type" :oindex="index" @change="finish"></Switch>
                             </view>
 						</view>
 					</block>
 				</view>
 			</view>
 		</view>
-        
-        <view class="task">
-        	<view class="task-header">
-        		<view class="header-title">其他任务</view>
-        		<uni-badge text="3" round type="warning"></uni-badge>
-        		<view class="header-progress">
-        			<progress percent="20" stroke-width="20" color="#F8D053" />
-        		</view>
-        	</view>
-        	<view class="uni-card">
-        		<view class="uni-list">
-        			<block v-for="(list,index) in otherData.list" :key="index">
-        				<view class="uni-list-cell uni-collapse">
-        					
-        					<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerOtherCollapse(index)">
-        						<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">{{list.task_name}}</view>
-        						<view class="task-deadline">{{list.deadline_date}}</view>
-        						<view class="badge-box" v-show="list.show">
-        							<uni-badge text="进行" square type="info"></uni-badge>
-        						</view>
-        					</view>
-        					
-        					<view class="uni-collapse-content" :class="list.show ? 'uni-active' : ''">
-        						{{list.task_desc}}
-        					</view>
-        					
-        					<view class="uni-collapse-footer" :class="list.show ? 'uni-active' : ''">
-        						<view class="badge-box">
-        							<uni-badge text="big tag" type="warning"></uni-badge>
-        							<uni-badge text="big big tag" type="danger"></uni-badge>
-        							<uni-badge text="big tag"></uni-badge>
-        						</view>
-        						<view class="rate-box">
-        							<Rate 
-        								disabled = true
-        								:value="list.starIndex4">
-        							</Rate>
-        						</view>
-        					</view>
-        					
-        					<view class="switch-box" :class="list.show ? 'bottom' : ''">
-        						<Switch :value="list.is_finish" :oid="list.id" @change="finish"></Switch>
-        					</view>
-        				</view>
-        			</block>
-        		</view>
-        	</view>
-        </view>
 	</view>
 </template>
 
@@ -148,80 +101,86 @@
 			return {
                 memberId: '',
                 teamuuid: '',
-				todayData: [
-                    {
-                        id: 1,
-                        title: '荆防颗粒点击放大',
-                        show: true,
-                        is_finish: true,
-                        starIndex4: 4
-                    }
-                ],
-                otherData: []
+                taskData: []
 			};
 		},
         onLoad(e) {
         	let memberInfo = service.getUsers();
         	this.memberId = memberInfo.id;
+            this.teamuuid = service.getTeam();
             
-            let info = JSON.parse(e.detailData);
-            this.teamuuid = info.teamuuid;
-            
-            this.get_today_task();
-            this.get_other_task();
+            this.get_task();
         },
 		methods: {
-            finish(e){
-                let detail = e.detail;
-                let eventid = e.currentTarget.dataset.eventid;
-                let index = eventid.substring(eventid.lastIndexOf("-") + 1, eventid.length);
-                this.todayData[index].is_finish = detail.value;
-            },
-			trigerCollapse(e) {
-				for (let i = 0, len = this.todayData.list.length; i < len; ++i) {
-					if (e === i) {
-						this.todayData.list[i].show = !this.todayData[i].show;
-					} else {
-						this.todayData.list[i].show = false;
-					}
-				}
-			},
-			trigerOtherCollapse(e) {
-				for (let i = 0, len = this.otherData.list.length; i < len; ++i) {
-					if (e === i) {
-						this.otherData.list[i].show = !this.otherData[i].show;
-					} else {
-						this.otherData.list[i].show = false;
-					}
-				}
-			},
-            get_today_task(){
+            get_task(){
                 uni.request({
-                	url: this.$requestUrl+'Task/get_task_today_list',
+                	url: this.$requestUrl+'Task/get_task_list',
                 	method: 'GET',
                 	data: {
                         team_uuid: this.teamuuid,
-						task_executive_id: this.memberId
+                        task_executive_id: this.memberId
                     },
                 	success: res => {
-                        console.log(res.data.data);
-                        this.todayData = res.data.data;
+                        let listData = res.data.data;
+                        this.taskData = listData;
+                        this.taskData.today.title = '今日任务';
+                        this.taskData.other.title = '其他任务';
+                        console.log(this.taskData);
                     },
                 	fail: () => {},
                 	complete: () => {}
                 });
             },
-            get_other_task(){
+            finish(e){
+                let status = e.detail.value;
+                let taskId = e.detail.oid;
+                let type = e.detail.otype;
+                let index = e.detail.oindex;
+                this.taskData[type].list[index].is_finish = e.detail.value;
+                if (status) {
+                	this.completeTask(taskId);
+                } else {
+                	this.cancelTask(taskId);
+                }
+            },
+			trigerCollapse(type,index) {
+				for (let i = 0, len = this.taskData[type].list.length; i < len; ++i) {
+					if (index === i) {
+						this.taskData[type].list[i].show = !this.taskData[type].list[i].show;
+					} else {
+						this.taskData[type].list[i].show = false;
+					}
+				}
+			},
+            completeTask(taskId) {
                 uni.request({
-                	url: this.$requestUrl+'Task/get_task_other_list',
+                	url: this.$requestUrl+'Task/complete_task',
                 	method: 'GET',
                 	data: {
-                		team_uuid: this.teamuuid,
-                		task_executive_id: this.memberId
+                        task_id: taskId
+                    },
+                	success: res => {
+                        uni.showToast({
+                        	title: '完成任务',
+                            icon: 'none'
+                        });
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
+            cancelTask(taskId) {
+                uni.request({
+                	url: this.$requestUrl+'Task/cancel_task',
+                	method: 'GET',
+                	data: {
+                		task_id: taskId
                 	},
                 	success: res => {
-                		console.log(res.data.data);
-                        this.otherData = res.data.data;
+                		uni.showToast({
+                			title: '取消完成任务',
+                			icon: 'none'
+                		});
                 	},
                 	fail: () => {},
                 	complete: () => {}
