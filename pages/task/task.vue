@@ -2,7 +2,7 @@
 	<view class="content">
 		<uniStatusBar></uniStatusBar>
 
-		<view class="brand-view">
+		<view class="brand-view" @tap="popup">
 			<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
 		</view>
 
@@ -35,55 +35,64 @@
 			</view>
 			<image src="../../static/img/close.png" mode="widthFix" class="notice-icon"></image>
 		</view>
-
-		<view class="task" v-for="(item, type) in taskData" :key="type">
-			<view class="task-header" v-show="item.list.length">
-				<view class="header-title">{{item.title}}</view>
-				<uni-badge :text="item.number_all" round type="warning"></uni-badge>
-				<view class="header-progress">
-					<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
-				</view>
-			</view>
-			<view class="uni-card">
-				<view class="uni-list">
-					<block v-for="(task,index) in item.list" :key="index">
-						<view class="uni-list-cell uni-collapse">
-                            
-							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(type,index)">
-								<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
-								<view class="task-deadline">{{task.deadline_date}}</view>
-                                <view class="badge-box" v-show="task.show">
-                                	<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
-                                	<view v-show="task.is_finish"><uni-badge text="完成" square type="warning"></uni-badge></view>
-                                </view>
-							</view>
-                            
-							<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
-								{{task.task_desc}}
-							</view>
-                            
-                            <view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
-                                <view class="badge-box">
-                                	<uni-badge text="big tag" type="warning"></uni-badge>
-                                	<uni-badge text="big big tag" type="danger"></uni-badge>
-                                	<uni-badge text="big tag"></uni-badge>
-                                </view>
-                                <view class="rate-box">
-                                	<Rate 
-                                        disabled = true
-                                        :value="task.difficult">
-                                    </Rate>
-                                </view>
-                            </view>
-                            
-                            <view class="switch-box" :class="task.show ? 'bottom' : ''">
-                            	<Switch :value="task.is_finish" :oid="task.id" :otype="type" :oindex="index" @change="finish"></Switch>
-                            </view>
-						</view>
-					</block>
-				</view>
-			</view>
-		</view>
+        
+        <scroll-view scroll-y>
+        	<view class="task" v-for="(item, type) in taskData" :key="type">
+        		<view class="task-header" v-show="item.list.length">
+        			<view class="header-title">{{item.title}}</view>
+        			<uni-badge :text="item.number_all" round type="warning"></uni-badge>
+        			<view class="header-progress">
+        				<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
+        			</view>
+        		</view>
+        		<view class="uni-card">
+        			<view class="uni-list">
+        				<block v-for="(task,index) in item.list" :key="index">
+        					<view class="uni-list-cell uni-collapse">
+        						
+        						<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(type,index)">
+        							<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
+        							<view class="task-deadline">{{task.deadline_date}}</view>
+        							<view class="badge-box" v-show="task.show">
+        								<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
+        								<view v-show="task.is_finish"><uni-badge text="完成" square type="warning"></uni-badge></view>
+        							</view>
+        						</view>
+        						
+        						<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
+        							{{task.task_desc}}
+        						</view>
+        						
+        						<view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
+        							<view class="badge-box">
+        								<uni-badge text="big tag" type="warning"></uni-badge>
+        								<uni-badge text="big big tag" type="danger"></uni-badge>
+        								<uni-badge text="big tag"></uni-badge>
+        							</view>
+        							<view class="rate-box">
+        								<Rate 
+        									disabled = true
+        									:value="task.difficult">
+        								</Rate>
+        							</view>
+        						</view>
+        						
+        						<view class="switch-box" :class="task.show ? 'bottom' : ''">
+        							<Switch :value="task.is_finish" :oid="task.id" :otype="type" :oindex="index" @change="finish"></Switch>
+        						</view>
+        					</view>
+        				</block>
+        			</view>
+        		</view>
+        	</view>
+        </scroll-view>
+        
+        <view class="mask" v-show="showMask" @click="popdown"></view>
+        <view class="popup popup-bottom" v-show="showMask">
+        	<text @tap="goTeam">选择城堡</text>
+        	<text @tap="goHall">任务大厅</text>
+        	<text>设置</text>
+        </view>
 	</view>
 </template>
 
@@ -101,7 +110,10 @@
 			return {
                 memberId: '',
                 teamuuid: '',
-                taskData: []
+                taskData: [],
+                
+                // pop
+                showMask: false
 			};
 		},
         onLoad(e) {
@@ -185,109 +197,34 @@
                 	fail: () => {},
                 	complete: () => {}
                 });
+            },
+            popup(e) {
+                this.showMask = true
+            },
+            popdown() {
+                this.showMask = false
+            },
+            goTeam() {
+                uni.navigateTo({
+                	url: '../team/team'
+                });
+            },
+            goHall() {
+                uni.navigateTo({
+                	url: '../hall/hall',
+                });
             }
 		}
 	}
 </script>
 
 <style>
-	.uni-card {
-        box-shadow: none;
-	}
-    .uni-list-cell{
-        align-items: flex-start;
-        padding-left: 120upx;
-        border: 1px solid #F2F2F2;
-        border-radius: 5px;
-        box-shadow: 0 1upx 4upx rgba(0, 0, 0, .3);
-        margin-bottom: 30px;
-    }
-    .uni-list-cell:after{
-        height: 0;
-    }
-    
-	.uni-list-cell-navigate {
-        padding-left: 0;
-		justify-content: flex-start;
-        align-items: center;
-	}
-    .uni-list-cell-navigate.uni-active {
-    	background-color: #FFF;
-    }
-    .uni-list-cell-navigate .task-name {
-    	font-size: 36upx;
-        max-width: 360upx;
-    }
-    .uni-list-cell-navigate .task-deadline{
-    	font-size: 28upx;
-    	margin-left: 20px;
-    }
-    .uni-list-cell-navigate .uni-badge{
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-    /* + -按钮 */
-    .uni-list-cell-navigate.uni-navigate-bottom:after {
-    	font-family: iconfont;
-        font-size: 60upx;
-        color: #B3B3B3;
-    	content: '\e620';
-    	left: -100upx;
-    	top: 48upx;
-    }
-    .uni-list-cell-navigate.uni-navigate-bottom.uni-active:after {
-    	font-family: iconfont;
-    	font-size: 76upx;
-    	color: #33414F;
-    	content: '\e61f';
-    	left: -100upx;
-    	top: 60upx;
-    }
-	
-    .uni-collapse-content{
-        display: none;
-        width: 450upx;
-        font-size: 34upx;
-        margin-bottom: 40px;
-    }
-    .uni-collapse-content.uni-active{
-        display: block;
-    }
-    
-    .uni-collapse-footer{
-        display: none;
-        padding: 20px 0;
-    }
-    .uni-collapse-footer.uni-active{
-        display: flex;
-        align-items: flex-end;
-    }
-    .switch-box{
-        position: absolute;
-        top: 18upx;
-        right: 10upx;
-    }
-    .switch-box.bottom{
-        top: auto;
-        right: auto;
-        bottom: 20px;
-        left: 15upx;
-    }
-    .uni-collapse-footer .badge-box{
-        display: flex;
-        flex-wrap: wrap-reverse;
-    }
-    .uni-collapse-footer .badge-box .uni-badge{
-        margin-bottom: 5px;
-        margin-right: 5px;
-    }
-    
-    
-
 	.content {
 		padding: 0;
 	}
+    scroll-view{
+        height: calc(100vh - 600upx);
+    }
 
 	.role {
 		height: 300upx;
@@ -354,4 +291,136 @@
 	.header-progress {
 		flex: 1;
 	}
+    
+    .uni-card {
+    	box-shadow: none;
+    }
+    .uni-list-cell{
+    	align-items: flex-start;
+    	padding-left: 120upx;
+    	border: 1px solid #F2F2F2;
+    	border-radius: 5px;
+    	box-shadow: 0 1upx 4upx rgba(0, 0, 0, .3);
+    	margin-bottom: 30px;
+    }
+    .uni-list-cell:after{
+    	height: 0;
+    }
+    
+    .uni-list-cell-navigate {
+    	padding-left: 0;
+    	justify-content: flex-start;
+    	align-items: center;
+    }
+    .uni-list-cell-navigate.uni-active {
+    	background-color: #FFF;
+    }
+    .uni-list-cell-navigate .task-name {
+    	font-size: 36upx;
+    	max-width: 360upx;
+    }
+    .uni-list-cell-navigate .task-deadline{
+    	font-size: 28upx;
+    	margin-left: 20px;
+    }
+    .uni-list-cell-navigate .uni-badge{
+    	position: absolute;
+    	top: 0;
+    	right: 0;
+    }
+    /* + -按钮 */
+    .uni-list-cell-navigate.uni-navigate-bottom:after {
+    	font-family: iconfont;
+    	font-size: 60upx;
+    	color: #B3B3B3;
+    	content: '\e620';
+    	left: -100upx;
+    	top: 48upx;
+    }
+    .uni-list-cell-navigate.uni-navigate-bottom.uni-active:after {
+    	font-family: iconfont;
+    	font-size: 76upx;
+    	color: #33414F;
+    	content: '\e61f';
+    	left: -100upx;
+    	top: 60upx;
+    }
+    
+    .uni-collapse-content{
+    	display: none;
+    	width: 450upx;
+    	font-size: 34upx;
+    	margin-bottom: 40px;
+    }
+    .uni-collapse-content.uni-active{
+    	display: block;
+    }
+    
+    .uni-collapse-footer{
+    	display: none;
+    	padding: 20px 0;
+    }
+    .uni-collapse-footer.uni-active{
+    	display: flex;
+    	align-items: flex-end;
+    }
+    .switch-box{
+    	position: absolute;
+    	top: 18upx;
+    	right: 10upx;
+    }
+    .switch-box.bottom{
+    	top: auto;
+    	right: auto;
+    	bottom: 20px;
+    	left: 15upx;
+    }
+    .uni-collapse-footer .badge-box{
+    	display: flex;
+    	flex-wrap: wrap-reverse;
+    }
+    .uni-collapse-footer .badge-box .uni-badge{
+    	margin-bottom: 5px;
+    	margin-right: 5px;
+    }
+    
+    /* pop */
+    .mask {
+        position: fixed;
+        z-index: 998;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, .3);
+    }
+
+    .popup {
+        position: absolute;
+        z-index: 999;
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 0 30upx rgba(0, 0, 0, .1);
+        box-shadow: 0 0 30upx rgba(0, 0, 0, .1);
+    }
+
+    .popup-bottom {
+        bottom: 0;
+        width: 100%;
+        height: 300upx;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .popup-bottom text {
+        line-height: 100upx;
+        font-size: 32upx;
+    }
+    .popup-bottom text + text{
+    	border-top: 1px solid #F2F2F2;
+    }
+
+    .popup .list-view {
+        height: 600upx;
+    }
 </style>

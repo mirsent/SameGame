@@ -2,7 +2,7 @@
 	<view class="content">
 		<uniStatusBar></uniStatusBar>
 
-		<view class="brand-view">
+		<view class="brand-view" @tap="popup">
 			<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
 		</view>
 
@@ -14,55 +14,66 @@
 		</view>
         
         <view class="tab">
-        	<view class="tab-item all">任务市场</view>
-        	<view class="tab-item today">今日任务</view>
-        	<view class="tab-item other">其他任务</view>
+        	<view class="tab-item all" @tap="getAll">任务市场</view>
+        	<view class="tab-item today" @tap="getToday">今日任务</view>
+        	<view class="tab-item other" @tap="getOther">其他任务</view>
         </view>
+        
+        <scroll-view scroll-y>
+        	<view class="task">
+        		<view class="uni-card">
+        			<view class="uni-list">
+        				<view v-if="taskData.length == 0">暂无任务...</view>
+        				<block v-for="(task,index) in taskData" :key="index">
+        					<view class="uni-list-cell uni-collapse">
+        						
+        						<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
+        							<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
+        							<view class="task-deadline">{{task.deadline_date}}</view>
+        							<view class="badge-box" v-show="task.show">
+        								<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
+        								<view v-show="task.is_finish"><uni-badge text="完成" square type="warning"></uni-badge></view>
+        							</view>
+        							<view class="task-executive" :class="task.show ? 'uni-active' : ''">
+        								<view class="task-executive-title uni-ellipsis">{{task.executive}}</view>
+        							</view>
+        						</view>
+        						
+        						<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
+        							{{task.task_desc}}
+        							
+        							<view class="task-executive">
+        								<!-- <text class="executive-btn">领取</text> -->
+        								<text class="executive-text">{{task.executive}}</text>
+        							</view>
+        						</view>
+        						
+        						<view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
+        							<view class="badge-box">
+        								<uni-badge text="big tag" type="warning"></uni-badge>
+        								<uni-badge text="big big tag" type="danger"></uni-badge>
+        								<uni-badge text="big tag"></uni-badge>
+        							</view>
+        							<view class="rate-box">
+        								<Rate 
+        									disabled = true
+        									:value="task.difficult">
+        								</Rate>
+        							</view>
+        						</view>
+        					</view>
+        				</block>
+        			</view>
+        		</view>
+        	</view>
+        </scroll-view>
 
-		<view class="task">
-			<view class="uni-card">
-				<view class="uni-list">
-					<block v-for="(list,index) in taskData" :key="index">
-						<view class="uni-list-cell uni-collapse">
-                            
-							<view class="uni-list-cell-navigate uni-navigate-bottom" :class="list.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
-								<view class="task-name" :class="list.show ? '' : 'uni-ellipsis'">{{list.task_name}}</view>
-								<view class="task-deadline">{{list.deadline_date}}</view>
-                                <view class="badge-box" v-show="list.show">
-                                	<uni-badge text="进行" square type="info"></uni-badge>
-                                </view>
-                                <view class="task-executive" v-show="!list.show">
-                                	马木木
-                                </view>
-							</view>
-                            
-							<view class="uni-collapse-content" :class="list.show ? 'uni-active' : ''">
-								即可来得及付款链接打开链接付款了大家辅导费地方点击付款进度款
-                                
-                                <view class="task-executive">
-                                    <!-- <text class="executive-btn">领取</text> -->
-                                	<text class="executive-text">马木</text>
-                                </view>
-							</view>
-                            
-                            <view class="uni-collapse-footer" :class="list.show ? 'uni-active' : ''">
-                                <view class="badge-box">
-                                	<uni-badge text="big tag" type="warning"></uni-badge>
-                                	<uni-badge text="big big tag" type="danger"></uni-badge>
-                                	<uni-badge text="big tag"></uni-badge>
-                                </view>
-                                <view class="rate-box">
-                                	<Rate 
-                                        disabled = true
-                                        :value="list.starIndex4">
-                                    </Rate>
-                                </view>
-                            </view>
-						</view>
-					</block>
-				</view>
-			</view>
-		</view>
+        <view class="mask" v-show="showMask" @click="popdown"></view>
+        <view class="popup popup-bottom" v-show="showMask">
+        	<text @tap="goTeam">选择城堡</text>
+        	<text @tap="goTask">我的任务</text>
+        	<text>设置</text>
+        </view>
 	</view>
 </template>
 
@@ -80,10 +91,17 @@
 			return {
                 memberId: '',
                 teamuuid: '',
-				taskData: []
+				taskData: [],
+                
+                // pop
+                showMask: false
 			};
 		},
         onLoad() {
+            uni.showLoading({
+            	title: '',
+            	mask: false
+            });
             let memberInfo = service.getUsers();
             this.memberId = memberInfo.id;
             this.teamuuid = service.getTeam();
@@ -91,19 +109,22 @@
         	this.get_task();
         },
 		methods: {
-            get_task(){
+            get_task(type=''){
                 uni.request({
                 	url: this.$requestUrl+'Task/get_task_hall',
                 	method: 'GET',
                 	data: {
-                        team_uuid: this.teamuuid
+                        team_uuid: this.teamuuid,
+                        type: type
                     },
                 	success: res => {
                         console.log(res.data.data);
                         this.taskData = res.data.data;
                     },
                 	fail: () => {},
-                	complete: () => {}
+                	complete: () => {
+                        uni.hideLoading();
+                    }
                 });
             },
             change(e){
@@ -120,7 +141,44 @@
 						this.taskData[i].show = false;
 					}
 				}
-			}
+			},
+            getAll() {
+                uni.showLoading({
+                	title: '',
+                	mask: false
+                });
+                this.get_task();
+            },
+            getToday() {
+                uni.showLoading({
+                	title: '',
+                	mask: false
+                });
+                this.get_task(1);
+            },
+            getOther() {
+                uni.showLoading({
+                	title: '',
+                	mask: false
+                });
+                this.get_task(2);
+            },
+            popup(e) {
+            	this.showMask = true
+            },
+            popdown() {
+            	this.showMask = false
+            },
+            goTeam() {
+                uni.navigateTo({
+                	url: '../team/team'
+                });
+            },
+            goTask() {
+                uni.navigateTo({
+                	url: '../task/task',
+                });
+            }
 		}
 	}
 </script>
@@ -129,6 +187,10 @@
 	.content {
 		padding: 0;
 	}
+    
+    scroll-view{
+        height: calc(100vh - 600upx);
+    }
     
     .banner{
         width: 100%;
@@ -204,6 +266,7 @@
     
     .uni-list-cell-navigate {
     	padding-left: 0;
+        padding-right: 0;
     	justify-content: flex-start;
     	align-items: center;
     }
@@ -227,9 +290,17 @@
         font-size: 32upx;
         color: #666;
         flex: 1;
-        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
     }
-    /* + -按钮 */
+    .uni-list-cell-navigate .task-executive.uni-active{
+        display: none;
+    }
+    .task-executive-title{
+        max-width: 140upx;
+    }
+    /* 展开合并按钮 */
     .uni-list-cell-navigate.uni-navigate-bottom:after {
     	font-family: iconfont;
     	font-size: 60upx;
@@ -298,5 +369,45 @@
     .uni-collapse-footer .badge-box .uni-badge{
     	margin-bottom: 5px;
     	margin-right: 5px;
+    }
+    
+    /* pop */
+    .mask {
+        position: fixed;
+        z-index: 998;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, .3);
+    }
+
+    .popup {
+        position: absolute;
+        z-index: 999;
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 0 30upx rgba(0, 0, 0, .1);
+        box-shadow: 0 0 30upx rgba(0, 0, 0, .1);
+    }
+
+    .popup-bottom {
+        bottom: 0;
+        width: 100%;
+        height: 300upx;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .popup-bottom text {
+        line-height: 100upx;
+        font-size: 32upx;
+    }
+    .popup-bottom text + text{
+        border-top: 1px solid #F2F2F2;
+    }
+
+    .popup .list-view {
+        height: 600upx;
     }
 </style>

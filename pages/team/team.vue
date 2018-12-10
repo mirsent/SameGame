@@ -28,7 +28,7 @@
         				</view>
         			</view>
         		</view>
-        		<view class="team-item" v-if="teamData.length < 3">
+        		<view class="team-item" v-if="teamData.length < 3" @tap="showRightDrawer">
         			<view class="icon">
         				<view class="top"></view>
         				<view class="bottom"></view>
@@ -45,24 +45,34 @@
         	</view>
         	<button class="btn-primary" @tap="goTask">继续游戏</button>
         </view>
+        
+        <uni-drawer :visible="rightDrawerVisible" mode="right" @close="closeRightDrawer">
+        	<view class="drawer-content">
+        		<view class="title">抽屉式导航</view>
+        	</view>
+        </uni-drawer>
 	</view>
 </template>
 
 <script>
     import service from '../../service.js';
     import uniStatusBar from '../../components/uni-status-bar.vue'
+    import uniDrawer from '../../components/uni-drawer.vue';
     import uniIcon from '../../components/uni-icon.vue'
     
 	export default {
         components: {
         	uniStatusBar,
+            uniDrawer,
         	uniIcon
         },
 		data() {
 			return {
                 memberId: '',
                 teamOnUid: '',
-                teamData: []
+                teamData: [],
+                
+                rightDrawerVisible: false
 			};
 		},
         onLoad(e) {
@@ -100,14 +110,17 @@
                 	return;
                 }
                 
-//                 let detail = {
-//                 	teamuuid: this.teamOnUid
-//                 }
                 service.addTeam(this.teamOnUid);
                 uni.navigateTo({
                 	url: "../task/task"
                 })
-            }
+            },
+            closeRightDrawer() {
+            	this.rightDrawerVisible = false;
+            },
+            showRightDrawer() {
+            	this.rightDrawerVisible = true;
+            },
         }
 	}
 </script>
