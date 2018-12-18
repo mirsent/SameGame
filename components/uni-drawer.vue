@@ -1,5 +1,5 @@
 <template>
-	<view class="uni-drawer" :catchtouchmove="catchtouchmove" :class="{'uni-drawer-visible':visible,'uni-drawer-right':rightMode}">
+	<view class="uni-drawer" :catchtouchmove="catchtouchmove" :class="{'uni-drawer-visible':visible,'uni-drawer-right':rightMode,'uni-drawer-bottom':bottomMode}">
 		<view v-if="showMask" class="uni-drawer-mask" @tap="close"></view>
 		<view class="uni-drawer-content">
 			<slot></slot>
@@ -15,7 +15,7 @@
 			 */
 			visible: {
 				type: Boolean,
-				default: false
+				default: true
 			},
 			/**
 			 * 显示模式（左、右），只在初始化生效
@@ -32,6 +32,7 @@
 		data() {
 			return {
 				rightMode: false,
+				bottomMode: false,
 				catchtouchmove: false
 			}
 		},
@@ -42,6 +43,7 @@
 		},
 		created() {
 			this.rightMode = this.mode === 'right'
+			this.bottomMode = this.mode === 'bottom'
 			//#ifdef MP-WEIXIN
 			this.catchtouchmove = true
 			//#endif
@@ -74,7 +76,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0, 0, 0, 0.4);
+		background: rgba(0, 0, 0, 0.6);
 	}
 
 	.uni-drawer>.uni-drawer-content {
@@ -93,6 +95,16 @@
 		left: auto;
 		right: 0;
 		transform: translatex(100%);
+	}
+
+	.uni-drawer.uni-drawer-bottom>.uni-drawer-content {
+        width: 100%;
+        height: auto;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        top: auto;
+        bottom: 0;
+		transform: translatey(100%);
 	}
 
 	.uni-drawer.uni-drawer-visible {

@@ -130,6 +130,16 @@
 		border: none;
 		border-radius: 0;
 	}
+    .btn-default {
+        font-size: 42upx;
+        width: 100%;
+        height: 80upx;
+        line-height: 80upx;
+        color: #FFF;
+        background-color: #999;
+        border: none;
+        border-radius: 0;
+    }
 
 	/* brand */
 	.brand-view {
@@ -143,4 +153,49 @@
 		margin-left: 30upx;
 		width: 460upx;
 	}
+    
+    /* 侧边栏样式 */
+    .drawer-content .title{
+    	font-size: 32upx;
+    	padding: 50px 40px 20px 40px;
+    	border-bottom: 1px solid #CCC;
+    }
+    .drawer-content .logo-box{
+    	width: 135px;
+    	height: 135px;
+    	border-radius: 135px;
+    	background-color: #FFF;
+    	overflow: hidden;
+    	display: flex;
+    	justify-content: center;
+    	align-items: center;
+    	position: absolute;
+    	top: -70px;
+    	left: 50%;
+    	margin-left: -70px;
+    	box-shadow: 0 2px 8px #CCC;
+    }
+    .drawer-content .logo{
+    	width: 120px;
+    	height: 120px;
+    	border-radius: 120px;
+    }
+    .drawer-content .form{
+    	padding: 40px;
+    }
+    .drawer-content input{
+    	font-size: 42upx;
+    	width: 100%;
+    }
+    .drawer-content textarea{
+        width: 100%;
+    }
+    .drawer-content .btn-group{
+    	display: flex;
+    	justify-content: space-between;
+    }
+    .drawer-content .btn-group button{
+    	width: 45%;
+    	margin: 0;
+    }
 </style>

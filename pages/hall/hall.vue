@@ -322,6 +322,7 @@
     	display: none;
     	width: 450upx;
     	font-size: 34upx;
+        min-height: 20px;
     	margin-bottom: 40px;
     }
     .uni-collapse-content.uni-active{
@@ -345,7 +346,7 @@
     
     .uni-collapse-footer{
     	display: none;
-    	padding: 20px 0;
+    	padding: 30px 0 20px 0;
     }
     .uni-collapse-footer.uni-active{
     	display: flex;

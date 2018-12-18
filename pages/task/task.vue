@@ -2,41 +2,43 @@
 	<view class="content">
 		<uniStatusBar></uniStatusBar>
 
-		<view class="brand-view" @tap="popup">
-			<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
+		<view class="scroll-top">
+			<view class="brand-view" @tap="popup">
+                <image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
+            </view>
+    
+            <view class="role">
+            
+            </view>
+    
+            <view class="label">
+                <view class="item">
+                    <image src="../../static/img/exp.png" mode="widthFix" class="icon"></image>
+                    <view class="value">1024</view>
+                </view>
+                <view class="item">
+                    <image src="../../static/img/trophy.png" mode="widthFix" class="icon"></image>
+                    <view class="value">99</view>
+                </view>
+                <view class="item">
+                    <image src="../../static/img/star.png" mode="widthFix" class="icon"></image>
+                    <view class="value">128</view>
+                </view>
+                <view class="item">
+                    <image src="../../static/img/coin.png" mode="widthFix" class="icon"></image>
+                    <view class="value">999</view>
+                </view>
+            </view>
+    
+            <view class="notice">
+                <view class="notice-c uni-ellipsis">
+                    公告内容：这是公告内容，点击进入公告列表
+                </view>
+                <image src="../../static/img/close.png" mode="widthFix" class="notice-icon"></image>
+            </view>
 		</view>
-
-		<view class="role">
         
-		</view>
-
-		<view class="label">
-			<view class="item">
-				<image src="../../static/img/exp.png" mode="widthFix" class="icon"></image>
-				<view class="value">1024</view>
-			</view>
-			<view class="item">
-				<image src="../../static/img/trophy.png" mode="widthFix" class="icon"></image>
-				<view class="value">99</view>
-			</view>
-			<view class="item">
-				<image src="../../static/img/star.png" mode="widthFix" class="icon"></image>
-				<view class="value">128</view>
-			</view>
-			<view class="item">
-				<image src="../../static/img/coin.png" mode="widthFix" class="icon"></image>
-				<view class="value">999</view>
-			</view>
-		</view>
-
-		<view class="notice">
-			<view class="notice-c uni-ellipsis">
-				公告内容：这是公告内容，点击进入公告列表
-			</view>
-			<image src="../../static/img/close.png" mode="widthFix" class="notice-icon"></image>
-		</view>
-        
-        <scroll-view scroll-y>
+        <scroll-view scroll-y :style="{height: scrollHeight+'px'}">
         	<view class="task" v-for="(item, type) in taskData" :key="type">
         		<view class="task-header" v-show="item.list.length">
         			<view class="header-title">{{item.title}}</view>
@@ -87,6 +89,54 @@
         	</view>
         </scroll-view>
         
+        <view class="add-box" @tap="showAddDrawer">
+            <image src="../../static/img/add.png"></image>
+        </view>
+        
+        <uni-drawer :visible="addDrawerVisible" mode="bottom" @close="closeAddDrawer">
+        	<view class="drawer-content">
+        		<view class="title">
+        			发布任务
+        		</view>
+        		<view class="logo-box">
+        			<image src="../../static/img/logo_r.jpg" class="logo"></image>
+        		</view>
+        		<view class="form">
+        			<view class="input-item">
+                        <view class="input-label">名称</view>
+        				<input type="text" @blur="teamNoChange" />
+        			</view>
+                    <view class="input-item">
+                        <view class="input-label">描述</view>
+                    	<textarea auto-height />
+                    </view>
+                    <view class="input-item">
+                        <view class="input-label">难度</view>
+                        <Rate
+                        	:value = "rateIndex"
+                        	@change="changeDifficult">
+                        </Rate>
+                    </view>
+                    <view class="input-item">
+                        <view class="input-label">截止日期</view>
+                    	<picker class="picker-item" mode="date" @change="dateChange">
+                    		<view>{{date}}</view>
+                    	</picker>
+                    </view>
+                    <view class="input-item">
+                        <view class="input-label">执行人</view>
+                    	<picker class="picker-item" mode="selector" :range="executiveList" @change="dateChange">
+                    		<view>{{date}}</view>
+                    	</picker>
+                    </view>
+        			<view class="btn-group">
+        				<button class="btn-primary" @tap="joinTeam">决定</button>
+        				<button class="btn-default" @tap="closeAddDrawer">取消</button>
+        			</view>
+        		</view>
+        	</view>
+        </uni-drawer>
+        
         <view class="mask" v-show="showMask" @click="popdown"></view>
         <view class="popup popup-bottom" v-show="showMask">
         	<text @tap="goTeam">选择城堡</text>
@@ -99,11 +149,13 @@
 <script>
     import service from '../../service.js';
 	import uniStatusBar from '../../components/uni-status-bar.vue';
+    import uniDrawer from '../../components/uni-drawer.vue';
 	import uniBadge from '../../components/uni-badge.vue';
 
 	export default {
 		components: {
 			uniStatusBar,
+            uniDrawer,
 			uniBadge
 		},
 		data() {
@@ -111,6 +163,13 @@
                 memberId: '',
                 teamuuid: '',
                 taskData: [],
+                
+                scrollHeight: '',
+                
+                addDrawerVisible: false,
+                rateIndex: 0,
+                
+                executiveList: [],
                 
                 // pop
                 showMask: false
@@ -120,6 +179,17 @@
         	let memberInfo = service.getUsers();
         	this.memberId = memberInfo.id;
             this.teamuuid = service.getTeam();
+            
+            uni.getSystemInfo({
+            	success: (res) => {
+                    let windowHeight = res.windowHeight;
+                    
+                    uni.createSelectorQuery().select(".scroll-top").boundingClientRect(data => {
+                        let topHeight = data.height;
+                        this.scrollHeight = windowHeight - topHeight - 70;
+                    }).exec();
+            	}
+            })
             
             this.get_task();
         },
@@ -213,17 +283,39 @@
                 uni.navigateTo({
                 	url: '../hall/hall',
                 });
+            },
+            closeAddDrawer() {
+            	this.addDrawerVisible = false;
+            },
+            showAddDrawer() {
+            	this.addDrawerVisible = true;
+            },
+            changeDifficult(e) {
+                this.rateIndex = e.detail.index;
             }
 		}
 	}
 </script>
 
 <style>
+    .drawer-content .input-item{
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: 8px;
+        margin-bottom: 30upx;
+        border-bottom: 5px solid #E63030;
+    }
+    .drawer-content .input-label{
+        width: 155px;
+        color: #666;
+    }
+    
+    
 	.content {
 		padding: 0;
 	}
     scroll-view{
-        height: calc(100vh - 600upx);
+        
     }
 
 	.role {
@@ -422,5 +514,18 @@
 
     .popup .list-view {
         height: 600upx;
+    }
+    
+    .add-box{
+    	width: 100%;
+    	height: 100px;
+    	background-color: #E63030;
+    	display: flex;
+    	justify-content: center;
+    	align-items: center;
+    }
+    .add-box image{
+    	width: 80px;
+    	height: 80px;
     }
 </style>
