@@ -1,20 +1,18 @@
 <template>
     <view class="content">
         
-        <view class="col-2">
+        <view class="logo-view">
         	<image src="../../static/img/logo.png" mode="widthFix" class="logo"></image>
         </view>
         
-        <view class="input-view col-2">
-        	<view class="col-1">
-        		<input type="text" :value="mail" placeholder="电子邮箱" disabled class="input" @blur="mailChange" />
-        		<input type="password" placeholder="密码" class="input" @blur="pswChange" />
-        		<button class="btn-primary" @tap="login">登录</button>
-                <view class="link-view uni-flex">
-                	<view class="foget link">忘记密码</view>或<view class="register link">创建新账户</view>
-                </view>
-                <view class="label">{{labelText}}</view>
+        <view class="input-view">
+        	<input type="text" :value="mail" placeholder="电子邮箱" disabled class="input" />
+        	<input type="password" placeholder="密码" class="input" @input="pswChange" />
+        	<button class="btn-primary" @tap="login">登录</button>
+        	<view class="link-view">
+        		<text class="foget link">忘记密码</text>或<text class="register link">创建新账户</text>
         	</view>
+        	<view class="label">{{labelText}}</view>
         </view>
     </view>
 </template>
@@ -35,9 +33,6 @@
         	this.mail = info.mail;
         },
         methods: {
-            mailChange(e) {
-                this.mail = e.detail.value
-            },
             pswChange(e) {
                 this.password = e.detail.value
             },

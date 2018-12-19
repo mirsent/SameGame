@@ -1,7 +1,7 @@
 {
     "name" : "SameGame",
     "appid" : "__UNI__2573CC1",
-    "description" : "登录模板",
+    "description" : "SameGame",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "app-plus" : {
@@ -39,7 +39,12 @@
             },
             "ios" : {},
             /* ios打包配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {},
+            "icons" : {
+                "ios" : {
+                    "appstore" : "F:/share/Same Game/192.png"
+                }
+            }
         }
     },
     /* SDK配置 */
@@ -49,7 +54,8 @@
         /* 小程序特有相关 */
         "appid" : "wx4af7990f8faed2af",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "minified" : true
         }
     }
 }

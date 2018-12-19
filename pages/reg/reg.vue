@@ -1,20 +1,18 @@
 <template>
     <view class="content">
         
-        <view class="col-2">
+        <view class="logo-view">
         	<image src="../../static/img/logo.png" mode="widthFix" class="logo"></image>
         </view>
         
-        <view class="input-view col-2">
-        	<view class="col-1">
-        		<input type="text" :value="mail" disabled placeholder="电子邮箱" class="input" @blur="mailChange" />
-        		<input type="password" value="" placeholder="设定密码" class="input" @blur="pswChange" />
-        		<view class="link-view uni-flex">
-        			创建账户，表示你同意<view class="foget link">服务条款</view>和<view class="register link">隐私条款</view>
-        		</view>
-                <button class="btn-primary" @tap="register">开始使用像游</button>
-        		<view class="label">{{labelText}}</view>
+        <view class="input-view">
+        	<input type="text" :value="mail" disabled placeholder="电子邮箱" class="input" />
+        	<input type="password" value="" placeholder="设定密码" class="input" @input="pswChange" />
+        	<view class="link-view">
+        		创建账户，表示你同意<text class="foget link">服务条款</text>和<text class="register link">隐私条款</text>
         	</view>
+        	<button class="btn-primary" @tap="register">开始使用像游</button>
+        	<view class="label">{{labelText}}</view>
         </view>
         
     </view>

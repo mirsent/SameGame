@@ -1,136 +1,134 @@
 <template>
 	<view class="content">
-		<uniStatusBar></uniStatusBar>
-
 		<view class="scroll-top">
+			<uniStatusBar></uniStatusBar>
 			<view class="brand-view" @tap="popup">
-                <image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
-            </view>
-    
-            <view class="role">
-            
-            </view>
-    
-            <view class="label">
-                <view class="item">
-                    <image src="../../static/img/exp.png" mode="widthFix" class="icon"></image>
-                    <view class="value">1024</view>
-                </view>
-                <view class="item">
-                    <image src="../../static/img/trophy.png" mode="widthFix" class="icon"></image>
-                    <view class="value">99</view>
-                </view>
-                <view class="item">
-                    <image src="../../static/img/star.png" mode="widthFix" class="icon"></image>
-                    <view class="value">128</view>
-                </view>
-                <view class="item">
-                    <image src="../../static/img/coin.png" mode="widthFix" class="icon"></image>
-                    <view class="value">999</view>
-                </view>
-            </view>
-    
-            <view class="notice">
-                <view class="notice-c uni-ellipsis">
-                    公告内容：这是公告内容，点击进入公告列表
-                </view>
-                <image src="../../static/img/close.png" mode="widthFix" class="notice-icon"></image>
-            </view>
+				<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
+			</view>
+
+			<view class="role">
+
+			</view>
+
+			<view class="label">
+				<view class="item">
+					<image src="../../static/img/exp.png" mode="widthFix" class="icon"></image>
+					<view class="value">1024</view>
+				</view>
+				<view class="item">
+					<image src="../../static/img/trophy.png" mode="widthFix" class="icon"></image>
+					<view class="value">99</view>
+				</view>
+				<view class="item">
+					<image src="../../static/img/star.png" mode="widthFix" class="icon"></image>
+					<view class="value">128</view>
+				</view>
+				<view class="item">
+					<image src="../../static/img/coin.png" mode="widthFix" class="icon"></image>
+					<view class="value">999</view>
+				</view>
+			</view>
+
+			<view class="notice">
+				<Notice icon="systemprompt" closable @close="closeNotice">
+					2018年世界杯,将于6月14日至7月15日举行
+				</Notice>
+			</view>
 		</view>
-        
-        <scroll-view scroll-y :style="{height: scrollHeight+'px'}">
-        	<view class="task" v-for="(item, type) in taskData" :key="type">
-        		<view class="task-header" v-show="item.list.length">
-        			<view class="header-title">{{item.title}}</view>
-        			<uni-badge :text="item.number_all" round type="warning"></uni-badge>
-        			<view class="header-progress">
-        				<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
-        			</view>
-        		</view>
-        		<view class="uni-card">
-        			<view class="uni-list">
-        				<block v-for="(task,index) in item.list" :key="index">
-        					<view class="uni-list-cell uni-collapse">
-        						
-        						<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(type,index)">
-        							<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
-        							<view class="task-deadline">{{task.deadline_date}}</view>
-        							<view class="badge-box" v-show="task.show">
-        								<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
-        								<view v-show="task.is_finish"><uni-badge text="完成" square type="warning"></uni-badge></view>
-        							</view>
-        						</view>
-        						
-        						<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
-        							{{task.task_desc}}
-        						</view>
-        						
-        						<view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
-        							<view class="badge-box">
-        								<uni-badge text="big tag" type="warning"></uni-badge>
-        								<uni-badge text="big big tag" type="danger"></uni-badge>
-        								<uni-badge text="big tag"></uni-badge>
-        							</view>
-        							<view class="rate-box">
-        								<Rate 
-        									disabled = true
-        									:value="task.difficult">
-        								</Rate>
-        							</view>
-        						</view>
-        						
-        						<view class="switch-box" :class="task.show ? 'bottom' : ''">
-        							<Switch :value="task.is_finish" :oid="task.id" :otype="type" :oindex="index" @change="finish"></Switch>
-        						</view>
-        					</view>
-        				</block>
-        			</view>
-        		</view>
-        	</view>
-        </scroll-view>
-        
-        <view class="add-box" @tap="showAddDrawer">
-            <image src="../../static/img/add.png"></image>
-        </view>
-        
-        <uni-drawer :visible="addDrawerVisible" mode="bottom" @close="closeAddDrawer">
-        	<view class="drawer-content">
-        		<view class="title">
-        			发布任务
-        		</view>
-        		<view class="logo-box">
-        			<image src="../../static/img/logo_r.jpg" class="logo"></image>
-        		</view>
-        		<view class="form">
-        			<view class="input-item">
-                        <view class="input-label">名称</view>
-        				<input type="text" @blur="teamNoChange" />
-        			</view>
-                    <view class="input-item">
-                        <view class="input-label">描述</view>
-                    	<textarea auto-height />
-                    </view>
+
+		<scroll-view scroll-y :style="{height: scrollHeight+'px'}">
+			<view class="task" v-for="(item, type) in taskData" :key="type">
+				<view class="task-header" v-show="item.list.length">
+					<view class="header-title">{{item.title}}</view>
+					<uni-badge :text="item.number_all" round type="warning"></uni-badge>
+					<view class="header-progress">
+						<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
+					</view>
+				</view>
+				<view class="uni-card">
+					<view class="uni-list">
+						<block v-for="(task,index) in item.list" :key="index">
+							<view class="uni-list-cell uni-collapse">
+
+								<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(type,index)">
+									<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
+									<view class="task-deadline">{{task.deadline_date}}</view>
+									<view class="badge-box" v-show="task.show">
+										<view v-show="!task.is_finish">
+											<uni-badge text="进行" square type="info"></uni-badge>
+										</view>
+										<view v-show="task.is_finish">
+											<uni-badge text="完成" square type="warning"></uni-badge>
+										</view>
+									</view>
+								</view>
+
+								<view class="uni-collapse-content" :class="task.show ? 'uni-active' : ''">
+									{{task.task_desc}}
+								</view>
+
+								<view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
+									<view class="badge-box">
+										<uni-badge text="big tag" type="warning"></uni-badge>
+										<uni-badge text="big big tag" type="danger"></uni-badge>
+										<uni-badge text="big tag"></uni-badge>
+									</view>
+									<view class="rate-box">
+										<Rate disabled=true :value="task.difficult">
+										</Rate>
+									</view>
+								</view>
+
+								<view class="switch-box" :class="task.show ? 'bottom' : ''">
+									<Switch :value="task.is_finish" :oid="task.id" :otype="type" :oindex="index" @change="finish"></Switch>
+								</view>
+							</view>
+						</block>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<view class="add-box" @tap="showAddDrawer">
+			<image src="../../static/img/add.png"></image>
+		</view>
+
+		<uni-drawer :visible="addDrawerVisible" mode="bottom" @close="closeAddDrawer">
+			<view class="drawer-content">
+				<view class="title">
+					发布任务
+				</view>
+				<view class="logo-box">
+					<image src="../../static/img/logo_r.jpg" class="logo"></image>
+				</view>
+				<view class="form">
+					<view class="input-item">
+						<view class="input-label">名称</view>
+						<input type="text" @blur="teamNameChange" />
+					</view>
+					<view class="input-item">
+						<view class="input-label">描述</view>
+						<textarea auto-height @blur="teamDescChange" />
+						</view>
                     <view class="input-item">
                         <view class="input-label">难度</view>
                         <Rate
                         	:value = "rateIndex"
-                        	@change="changeDifficult">
+                        	@change="difficultChange">
                         </Rate>
                     </view>
                     <view class="input-item">
-                        <view class="input-label">截止日期</view>
-                    	<picker class="picker-item" mode="date" @change="dateChange">
-                    		<view>{{date}}</view>
+                    	<picker class="picker-item" mode="selector" :range="executiveList" range-key="text" @change="executiveChange">
+                    		<view><text class="picker-label">执行人</text>{{taskExcutive}}</view>
                     	</picker>
                     </view>
                     <view class="input-item">
-                        <view class="input-label">执行人</view>
-                    	<picker class="picker-item" mode="selector" :range="executiveList" @change="dateChange">
-                    		<view>{{date}}</view>
+                    	<picker class="picker-item" mode="date" @change="dateChange">
+                    		<view><text class="picker-label">截止日期</text>{{deadline}}</view>
                     	</picker>
                     </view>
         			<view class="btn-group">
-        				<button class="btn-primary" @tap="joinTeam">决定</button>
+        				<button class="btn-primary" @tap="addTask">决定</button>
         				<button class="btn-default" @tap="closeAddDrawer">取消</button>
         			</view>
         		</view>
@@ -169,7 +167,13 @@
                 addDrawerVisible: false,
                 rateIndex: 0,
                 
-                executiveList: [],
+                taskName: '',
+                taskDesc: '',
+                taskExcutiveId: '',
+                taskExcutive: '',
+                deadline: '',
+                
+                executiveList: [], // 执行人数组
                 
                 // pop
                 showMask: false
@@ -179,22 +183,35 @@
         	let memberInfo = service.getUsers();
         	this.memberId = memberInfo.id;
             this.teamuuid = service.getTeam();
-            
+            this.getTask();
+        },
+        onReady() {
             uni.getSystemInfo({
             	success: (res) => {
-                    let windowHeight = res.windowHeight;
+            		console.log('系统信息：' + JSON.stringify(res));
+            		let windowHeight = res.screenHeight;
                     
-                    uni.createSelectorQuery().select(".scroll-top").boundingClientRect(data => {
-                        let topHeight = data.height;
-                        this.scrollHeight = windowHeight - topHeight - 70;
-                    }).exec();
+                    let query = uni.createSelectorQuery();
+                    query.select(".scroll-top").boundingClientRect();
+                    query.select(".add-box").boundingClientRect();
+                    query.exec(data => {
+                        let top = data[0];
+                        let btn = data[1];
+                        this.scrollHeight = windowHeight - top.height - btn.height;
+                    	console.log("得到节点信息" + JSON.stringify(data));
+                    });
             	}
             })
-            
-            this.get_task();
         },
 		methods: {
-            get_task(){
+            closeNotice() {
+                this.scrollHeight = this.scrollHeight + 35;
+            },
+            getTask(){
+                uni.showLoading({
+                	title: '',
+                	mask: false
+                });
                 uni.request({
                 	url: this.$requestUrl+'Task/get_task_list',
                 	method: 'GET',
@@ -208,6 +225,46 @@
                         this.taskData.today.title = '今日任务';
                         this.taskData.other.title = '其他任务';
                         console.log(this.taskData);
+                    },
+                	fail: () => {},
+                	complete: () => {
+                        uni.hideLoading()
+                    }
+                });
+            },
+            addTask() {
+                uni.request({
+                	url: this.$requestUrl+'Task/add_task',
+                	method: 'POST',
+                    header: {
+                    	'content-type': 'application/x-www-form-urlencoded'
+                    },
+                	data: {
+                        task_publisher_id: this.memberId,
+                        team_uuid: this.teamuuid,
+                        task_name: this.taskName,
+                        task_desc: this.taskDesc,
+                        task_executive_id: this.taskExcutiveId,
+                        difficult: this.rateIndex,
+                        deadline_time: this.deadline
+                    },
+                	success: res => {
+                        if (res.data.status == 1) {
+                            uni.showToast({
+                            	title: '发布任务成功',
+                            	mask: false,
+                            	duration: 1500
+                            });
+                        	this.closeAddDrawer();
+                            this.getTask()
+                        } else {
+                            uni.showToast({
+                            	title: '发布任务失败！',
+                                icon: 'none',
+                            	mask: false,
+                            	duration: 1500
+                            });
+                        }
                     },
                 	fail: () => {},
                 	complete: () => {}
@@ -268,6 +325,20 @@
                 	complete: () => {}
                 });
             },
+            getMembers() {
+                uni.request({
+                	url: this.$requestUrl+'Member/get_members_by_team',
+                	method: 'GET',
+                	data: {
+                        team_uuid: this.teamuuid
+                    },
+                	success: res => {
+                        this.executiveList = res.data.data;
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
             popup(e) {
                 this.showMask = true
             },
@@ -289,42 +360,40 @@
             },
             showAddDrawer() {
             	this.addDrawerVisible = true;
+                this.getMembers();
             },
-            changeDifficult(e) {
+            teamNameChange(e) {
+                this.teamName = e.detail.value;
+            },
+            teamDescChange(e) {
+                this.teamDesc = e.detail.value;
+            },
+            difficultChange(e) {
                 this.rateIndex = e.detail.index;
+            },
+            dateChange(e) {
+                this.deadline = e.detail.value;
+            },
+            executiveChange(e) {
+                let info = this.executiveList[e.detail.value];
+                this.taskExcutive = info['text'];
+                this.taskExcutiveId = info['value'];
             }
 		}
 	}
 </script>
 
 <style>
-    .drawer-content .input-item{
-        display: flex;
-        align-items: flex-end;
-        padding-bottom: 8px;
-        margin-bottom: 30upx;
-        border-bottom: 5px solid #E63030;
-    }
-    .drawer-content .input-label{
-        width: 155px;
-        color: #666;
-    }
-    
-    
 	.content {
 		padding: 0;
 	}
-    scroll-view{
-        
-    }
 
 	.role {
-		height: 300upx;
+		height: 300px;
 	}
 
-	.label,
-	.notice {
-		height: 80upx;
+	.label{
+		height: 80px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -348,22 +417,6 @@
 		font-size: 32upx;
 		color: #FFF;
 		margin-left: 10px;
-	}
-
-	.notice {
-		padding: 0 30upx;
-		background-color: #FEF6DD
-	}
-
-	.notice-c {
-		font-size: 32upx;
-		color: #967F35;
-		width: 620upx;
-		padding-left: 20upx;
-	}
-
-	.notice-icon {
-		width: 60upx;
 	}
 
 	.task-header {
@@ -523,6 +576,8 @@
     	display: flex;
     	justify-content: center;
     	align-items: center;
+        position: fixed;
+        bottom: 0;
     }
     .add-box image{
     	width: 80px;

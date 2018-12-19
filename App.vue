@@ -16,7 +16,7 @@
 	@import "./common/uni.css";
 
 	page {
-		min-height: 100%;
+        height: 100%;
 		display: flex;
 	}
 
@@ -155,6 +155,25 @@
 	}
     
     /* 侧边栏样式 */
+    .drawer-content .input-item{
+    	display: flex;
+    	align-items: flex-end;
+    	padding-bottom: 8px;
+    	margin-bottom: 30upx;
+    	border-bottom: 5px solid #E63030;
+    }
+    .drawer-content .input-label{
+    	width: 160px;
+    	color: #666;
+    }
+    .drawer-content .picker-label{
+    	display: inline-block;
+    	width: 160px;
+    	color: #666;
+    }
+    .drawer-content .picker-item{
+    	width: 100%;
+    }
     .drawer-content .title{
     	font-size: 32upx;
     	padding: 50px 40px 20px 40px;
@@ -185,10 +204,10 @@
     }
     .drawer-content input{
     	font-size: 42upx;
-    	width: 100%;
+        flex: 1;
     }
     .drawer-content textarea{
-        width: 100%;
+        flex: 1;
     }
     .drawer-content .btn-group{
     	display: flex;

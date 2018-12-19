@@ -1,15 +1,13 @@
 <template>
 	<view class="content">
-		<view class="col-2">
+		<view class="logo-view">
 			<image src="../../static/img/logo.png" mode="widthFix" class="logo"></image>
 		</view>
         
-        <view class="input-view col-2">
-            <view class="col-1">
-                <view class="label">{{labelText}}</view>
-                <input type="text" value="" placeholder="电子邮箱" class="input" @blur="mailChange"/>
-                <button class="btn-primary" @tap="check">继续</button>
-            </view>
+        <view class="input-view">
+            <view class="label">{{labelText}}</view>
+            <input type="text" value="" placeholder="电子邮箱" class="input" @input="mailChange"/>
+            <button class="btn-primary" @tap="check">继续</button>
         </view>
         
 	</view>
@@ -59,7 +57,9 @@
                         }
                     },
                 	fail: () => {},
-                	complete: () => {}
+                	complete: () => {
+                        uni.hideLoading()
+                    }
                 });
             }
         }
@@ -68,7 +68,6 @@
 
 <style>
     @import "../../common/login.css";
-    
     .label{
         margin-bottom: 100upx;
     }

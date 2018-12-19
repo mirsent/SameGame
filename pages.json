@@ -1,12 +1,6 @@
 {
     "pages" : [
         {
-            "path" : "pages/main/main",
-            "style" : {
-                "navigationBarTitleText" : "登录模板"
-            }
-        },
-        {
             "path" : "pages/login/login",
             "style" : {
                 "navigationBarTitleText" : "登录"
@@ -43,6 +37,7 @@
             "style" : {
                 "usingComponents" : {
                     "switch" : "/wxcomponents/switch/index",
+                    "notice" : "/wxcomponents/notice-bar/index",
                     "rate" : "/wxcomponents/rate/index"
                 }
             }
@@ -84,25 +79,6 @@
             {
                 "name" : "hall",
                 "path" : "pages/hall/hall"
-            }
-        ]
-    },
-    "tabBar" : {
-        "color" : "#7a7e83",
-        "selectedColor" : "#0faeff",
-        "backgroundColor" : "#ffffff",
-        "list" : [
-            {
-                "pagePath" : "pages/main/main",
-                "text" : "首页",
-                "iconPath" : "static/img/home.png",
-                "selectedIconPath" : "static/img/homeHL.png"
-            },
-            {
-                "pagePath" : "pages/user/user",
-                "text" : "我的",
-                "iconPath" : "static/img/user.png",
-                "selectedIconPath" : "static/img/userHL.png"
             }
         ]
     },
