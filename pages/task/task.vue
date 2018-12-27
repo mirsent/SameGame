@@ -7,7 +7,38 @@
 			</view>
 
 			<view class="role">
-
+                <view class="left">
+                	<image src="../../static/img/role.png"></image>
+                </view>
+                <view class="right">
+                	<view class="role-info">
+                		<view class="head">
+                			<image src="../../static/img/head.png"></image>
+                		</view>
+                		<view class="title">
+                			<view class="name">
+                				金坷垃
+                			</view>
+                			<view class="brief">
+                				12级 战士
+                			</view>
+                		</view>
+                	</view>
+                	<view class="progress">
+                		<image src="../../static/img/blood.png"></image>
+                		<view class="progress-box">
+                			<progress percent="70" stroke-width="20" activeColor="#8F1C25" />
+                		</view>
+                		<text>35/50</text>
+                	</view>
+                	<view class="progress">
+                		<image src="../../static/img/magic.png"></image>
+                		<view class="progress-box">
+                			<progress percent="40" stroke-width="20" activeColor="#10CFBD" />
+                		</view>
+                		<text>35/50</text>
+                	</view>
+                </view>
 			</view>
 
 			<view class="label">
@@ -188,7 +219,6 @@
         onReady() {
             uni.getSystemInfo({
             	success: (res) => {
-            		console.log('系统信息：' + JSON.stringify(res));
             		let windowHeight = res.screenHeight;
                     
                     let query = uni.createSelectorQuery();
@@ -198,7 +228,6 @@
                         let top = data[0];
                         let btn = data[1];
                         this.scrollHeight = windowHeight - top.height - btn.height;
-                    	console.log("得到节点信息" + JSON.stringify(data));
                     });
             	}
             })
@@ -390,7 +419,57 @@
 
 	.role {
 		height: 300px;
+        display: flex;
 	}
+    .role .left{
+        width: 300px;
+        height: 300px;
+    }
+    .role .left image{
+        width: 100%;
+        height: 100%;
+    }
+    .role .right{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        background: #F55753;
+        padding: 20px;
+    }
+    .role .role-info{
+        display: flex;
+    }
+    .role-info .head image{
+        width: 100px;
+        height: 100px;
+        margin-right: 20px;
+    }
+    .role-info .name{
+        font-size: 42upx;
+        color: #FFF;
+    }
+    .role-info .brief{
+        font-size: 32upx;
+        color: #F9BDBD;
+    }
+    .role .right .progress{
+        display: flex;
+        align-items: center;
+    }
+    .role .progress image{
+        width: 50px;
+        height: 60px;
+        margin-right: 15px;
+    }
+    .role .progress .progress-box{
+    	width: 240upx;
+        margin-right: 15px;
+    }
+    .role .progress text{
+        font-size: 32upx;
+        color: #FFF;
+    }
 
 	.label{
 		height: 80px;
