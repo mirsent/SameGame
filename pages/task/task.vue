@@ -5,7 +5,6 @@
 			<view class="brand-view" @tap="popup">
 				<image src="../../static/img/brand.png" class="brand" mode="widthFix"></image>
 			</view>
-
 			<view class="role">
                 <view class="left">
                 	<image src="../../static/img/role.png"></image>
@@ -17,7 +16,15 @@
                 		</view>
                 		<view class="title">
                 			<view class="name">
-                				金坷垃
+                                <input v-if="showEdit" type="text" focus="true" :value="memberInfo.member_name" 
+                                    @input="memberChange"
+                                    @blur="editMember" />
+                				<view v-else class="uni-ellipsis">
+                					{{memberInfo.member_name}}
+                				</view>
+                                
+                                <uni-icon v-if="showEdit" type="checkmarkempty" @click="editMember"></uni-icon>
+                                <uni-icon v-else type="compose" @click="showEditMember"></uni-icon>
                 			</view>
                 			<view class="brief">
                 				12级 战士
@@ -60,9 +67,9 @@
 				</view>
 			</view>
 
-			<view class="notice">
+			<view class="notice" v-if="notice">
 				<Notice icon="systemprompt" closable @close="closeNotice">
-					2018年世界杯,将于6月14日至7月15日举行
+					{{notice}}
 				</Notice>
 			</view>
 		</view>
@@ -170,7 +177,7 @@
         <view class="popup popup-bottom" v-show="showMask">
         	<text @tap="goTeam">选择城堡</text>
         	<text @tap="goHall">任务大厅</text>
-        	<text>设置</text>
+        	<!-- <text>我的</text> -->
         </view>
 	</view>
 </template>
@@ -180,15 +187,20 @@
 	import uniStatusBar from '../../components/uni-status-bar.vue';
     import uniDrawer from '../../components/uni-drawer.vue';
 	import uniBadge from '../../components/uni-badge.vue';
+    import uniIcon from '../../components/uni-icon.vue'
 
 	export default {
 		components: {
 			uniStatusBar,
             uniDrawer,
-			uniBadge
+			uniBadge,
+            uniIcon
 		},
 		data() {
 			return {
+                notice: '',
+                
+                memberInfo: [],
                 memberId: '',
                 teamuuid: '',
                 taskData: [],
@@ -207,14 +219,18 @@
                 executiveList: [], // 执行人数组
                 
                 // pop
-                showMask: false
+                showMask: false,
+                
+                showEdit: false,
 			};
 		},
         onLoad(e) {
         	let memberInfo = service.getUsers();
+            this.memberInfo = memberInfo;
         	this.memberId = memberInfo.id;
             this.teamuuid = service.getTeam();
             this.getTask();
+            this.getNotice();
         },
         onReady() {
             uni.getSystemInfo({
@@ -233,8 +249,49 @@
             })
         },
 		methods: {
+            memberChange(e) {
+                this.memberInfo.member_name = e.detail.value; 
+            },
+            showEditMember() {
+                this.showEdit = true;
+            },
+            editMember() {
+                this.showEdit = false;
+                uni.request({
+                	url: this.$requestUrl+'Member/edit_member',
+                	method: 'POST',
+                    header: {
+                    	'content-type': 'application/x-www-form-urlencoded'
+                    },
+                	data: {
+                        member_id: this.memberId,
+                        member_name: this.memberInfo.member_name
+                    },
+                	success: res => {
+                        if (res.data.status == 1) {
+                            service.addUser(res.data.data);
+                        }
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
             closeNotice() {
                 this.scrollHeight = this.scrollHeight + 35;
+            },
+            getNotice() {
+                uni.request({
+                	url: this.$requestUrl+'Login/get_notice',
+                	method: 'GET',
+                	data: {
+                        team_uuid: this.teamuuid
+                    },
+                	success: res => {
+                        this.notice = res.data.data.content;
+                    },
+                	fail: () => {},
+                	complete: () => {}
+                });
             },
             getTask(){
                 uni.showLoading({
@@ -253,7 +310,6 @@
                         this.taskData = listData;
                         this.taskData.today.title = '今日任务';
                         this.taskData.other.title = '其他任务';
-                        console.log(this.taskData);
                     },
                 	fail: () => {},
                 	complete: () => {
@@ -332,6 +388,7 @@
                         	title: '完成任务',
                             icon: 'none'
                         });
+                        this.getTask();
                     },
                 	fail: () => {},
                 	complete: () => {}
@@ -349,6 +406,7 @@
                 			title: '取消完成任务',
                 			icon: 'none'
                 		});
+                        this.getTask();
                 	},
                 	fail: () => {},
                 	complete: () => {}
@@ -413,6 +471,7 @@
 </script>
 
 <style>
+    @import "../../common/icon.css";
 	.content {
 		padding: 0;
 	}
@@ -448,6 +507,11 @@
     .role-info .name{
         font-size: 42upx;
         color: #FFF;
+        display: flex;
+        align-items: center;
+    }
+    .role-info .name .uni-ellipsis{
+        width: 250upx;
     }
     .role-info .brief{
         font-size: 32upx;

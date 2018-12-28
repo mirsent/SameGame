@@ -14,13 +14,36 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	export default {
 		data() {
 			return {
 				labelText: '免费注册或登录',
-                mail: ''
+                mail: '',
+                openid: ''
 			};
 		},
+        onLoad() {
+        	// #ifdef MP-WEIXIN
+        	uni.login({
+        		provider: 'weixin',
+        		success: res => {
+        	        this.code2Session(res.code)
+        	    },
+        		fail: () => {},
+        		complete: () => {}
+        	});
+        	// #endif
+            
+            // #ifdef APP-PLUS
+            let memberInfo = service.getUsers();
+            if (memberInfo) {
+            	uni.navigateTo({
+            		url: "../team/team"
+            	})
+            }
+            // #endif
+        },
         methods: {
             mailChange(e) {
                 this.mail = e.detail.value
@@ -34,7 +57,9 @@
                 	});
                 	return;
                 }
-                
+                this.checkEmail();
+            },
+            checkEmail() {
                 uni.showLoading();
                 uni.request({
                 	url: this.$requestUrl+'Login/check_email',
@@ -44,7 +69,8 @@
                     },
                 	success: res => {
                         let detail = {
-                        	mail: this.mail
+                        	mail: this.mail,
+                            openid: this.openid
                         }
                         if (res.data.status == 1) {
                         	uni.navigateTo({
@@ -53,6 +79,33 @@
                         } else {
                             uni.navigateTo({
                             	url: "../reg/reg?detailData=" + JSON.stringify(detail)
+                            })
+                        }
+                    },
+                	fail: () => {},
+                	complete: () => {
+                        uni.hideLoading()
+                    }
+                });
+            },
+            code2Session(jsCode) {
+                uni.showLoading({
+                	title: '',
+                	mask: false
+                });
+                uni.request({
+                	url: this.$requestUrl+'Login/code_2_session',
+                	method: 'GET',
+                	data: {
+                        js_code: jsCode
+                    },
+                	success: res => {
+                        let info = res.data.data;
+                        this.openid = info.openid;
+                        if (info.member) {
+                        	service.addUser(info.member);
+                            uni.navigateTo({
+                            	url: "../team/team"
                             })
                         }
                     },

@@ -25,12 +25,14 @@
         data() {
             return {
                 labelText: '新用户正在注册“像游”账户',
+                openid: '',
                 mail: '',
                 password: ''
             }
         },
         onLoad(e) {
         	let info = JSON.parse(e.detailData);
+            this.openid = info.openid;
         	this.mail = info.mail;
         },
         methods: {
@@ -56,6 +58,7 @@
                 		'content-type': 'application/x-www-form-urlencoded'
                 	},
                 	data: {
+                        openid: this.openid,
                         mail: this.mail,
                         password: this.password
                     },

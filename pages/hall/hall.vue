@@ -72,7 +72,7 @@
         <view class="popup popup-bottom" v-show="showMask">
         	<text @tap="goTeam">选择城堡</text>
         	<text @tap="goTask">我的任务</text>
-        	<text>设置</text>
+        	<!-- <text>我的</text> -->
         </view>
 	</view>
 </template>
@@ -106,10 +106,10 @@
             this.memberId = memberInfo.id;
             this.teamuuid = service.getTeam();
             
-        	this.get_task();
+        	this.getTask();
         },
 		methods: {
-            get_task(type=''){
+            getTask(type=''){
                 uni.request({
                 	url: this.$requestUrl+'Task/get_task_hall',
                 	method: 'GET',
@@ -147,21 +147,21 @@
                 	title: '',
                 	mask: false
                 });
-                this.get_task();
+                this.getTask();
             },
             getToday() {
                 uni.showLoading({
                 	title: '',
                 	mask: false
                 });
-                this.get_task(1);
+                this.getTask(1);
             },
             getOther() {
                 uni.showLoading({
                 	title: '',
                 	mask: false
                 });
-                this.get_task(2);
+                this.getTask(2);
             },
             popup(e) {
             	this.showMask = true

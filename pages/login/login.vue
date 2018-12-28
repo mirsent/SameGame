@@ -24,12 +24,14 @@
         data() {
             return {
                 labelText: '已存在“像游”账户，输入密码即可登录',
+                openid: '',
                 mail: '',
                 password: ''
             }
         },
         onLoad(e) {
         	let info = JSON.parse(e.detailData);
+            this.openid = info.openid;
         	this.mail = info.mail;
         },
         methods: {
@@ -45,6 +47,7 @@
                         'content-type': 'application/x-www-form-urlencoded'
                     },
                 	data: {
+                        openid: this.openid,
                         mail: this.mail,
                         password: this.password
                     },

@@ -72,7 +72,9 @@
                 	<image src="../../static/img/logo_r.jpg" class="logo"></image>
                 </view>
                 <view class="form">
-                	<input type="text" placeholder="城堡名称" value="" @blur="teamNameChange" />
+                	<view class="input-item">
+                		<input type="text" placeholder="城堡名称" value="" @blur="teamNameChange" />
+                	</view>
                     <view class="btn-group">
                     	<button class="btn-primary" @tap="createTeam">决定</button>
                     	<button class="btn-default" @tap="closeAddDrawer">取消</button>
@@ -90,7 +92,9 @@
                 	<image src="../../static/img/logo_r.jpg" class="logo"></image>
                 </view>
                 <view class="form">
-                	<input type="text" placeholder="城堡编号" value="" @blur="teamNoChange" />
+                    <view class="input-item">
+                    	<input type="text" placeholder="城堡编号" value="" @blur="teamNoChange" />
+                    </view>
                     <view class="btn-group">
                     	<button class="btn-primary" @tap="joinTeam">决定</button>
                     	<button class="btn-default" @tap="closeJoinDrawer">取消</button>
@@ -142,9 +146,11 @@
                         member_id: this.memberId
                     },
                 	success: res => {
-                        let teamInfo = res.data.data;
-                        this.teamOnUid = teamInfo[0]['team_uuid']; // 默认选中第一个
-                        this.teamData = teamInfo;
+                        if (res.data.data.length) {
+                        	let teamInfo = res.data.data;
+                        	this.teamOnUid = teamInfo[0]['team_uuid']; // 默认选中第一个
+                        	this.teamData = teamInfo;
+                        }
                     },
                 	fail: () => {},
                 	complete: () => {
