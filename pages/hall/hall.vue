@@ -28,7 +28,7 @@
         					<view class="uni-list-cell uni-collapse">
         						
         						<view class="uni-list-cell-navigate uni-navigate-bottom" :class="task.show ? 'uni-active' : ''" @click="trigerCollapse(index)">
-        							<view class="task-name" :class="task.show ? '' : 'uni-ellipsis'">{{task.task_name}}</view>
+        							<view class="task-name" :class="[task.show ? '' : 'uni-ellipsis', {'text-danger': task.is_delay}]">{{task.task_name}}</view>
         							<view class="task-deadline">{{task.deadline_date}}</view>
         							<view class="badge-box" v-show="task.show">
         								<view v-show="!task.is_finish"><uni-badge text="进行" square type="info"></uni-badge></view>
@@ -50,9 +50,7 @@
         						
         						<view class="uni-collapse-footer" :class="task.show ? 'uni-active' : ''">
         							<view class="badge-box">
-        								<uni-badge text="big tag" type="warning"></uni-badge>
-        								<uni-badge text="big big tag" type="danger"></uni-badge>
-        								<uni-badge text="big tag"></uni-badge>
+                                        <uni-badge v-if="task.is_delay" text="逾期" type="danger"></uni-badge>
         							</view>
         							<view class="rate-box">
         								<Rate 
@@ -345,11 +343,13 @@
     }
     
     .uni-collapse-footer{
+        width: 100%;
     	display: none;
     	padding: 30px 0 20px 0;
     }
     .uni-collapse-footer.uni-active{
     	display: flex;
+        justify-content: space-between;
     	align-items: flex-end;
     }
     .switch-box{
