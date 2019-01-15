@@ -19,6 +19,10 @@
         height: 100%;
 		display: flex;
 	}
+    
+    .text-danger {
+        color: #E63030;
+    }
 
 	.content {
 		display: flex;
