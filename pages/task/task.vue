@@ -141,32 +141,41 @@
 				</view>
 				<view class="form">
 					<view class="input-item">
+						<picker class="picker-item" mode="selector" :range="typeList" :value="typeIndex" @change="typeChange">
+							<view><text class="picker-label">类型</text>{{typeList[typeIndex]}}</view>
+						</picker>
+					</view>
+					<view class="input-item">
 						<view class="input-label">名称</view>
-						<input type="text" @blur="teamNameChange" />
+						<input type="text" @blur="taskNameChange" />
 					</view>
 					<view class="input-item">
 						<view class="input-label">描述</view>
-						<textarea auto-height @blur="teamDescChange" />
+						<textarea auto-height @blur="taskDescChange" />
+					</view>
+					
+					<view v-if="typeIndex == 0">
+						<view class="input-item">
+						    <view class="input-label">难度</view>
+						    <Rate
+						    	:value = "rateIndex"
+						    	@change="difficultChange">
+						    </Rate>
 						</view>
-                    <view class="input-item">
-                        <view class="input-label">难度</view>
-                        <Rate
-                        	:value = "rateIndex"
-                        	@change="difficultChange">
-                        </Rate>
-                    </view>
-                    <view class="input-item">
-                    	<picker class="picker-item" mode="selector" :range="executiveList" range-key="text" @change="executiveChange">
-                    		<view><text class="picker-label">执行人</text>{{taskExcutive}}</view>
-                    	</picker>
-                    </view>
-                    <view class="input-item">
-                    	<picker class="picker-item" mode="date" @change="dateChange">
-                    		<view><text class="picker-label">截止日期</text>{{deadline}}</view>
-                    	</picker>
-                    </view>
+						<view class="input-item">
+							<picker class="picker-item" mode="selector" :range="executiveList" range-key="text" @change="executiveChange">
+								<view><text class="picker-label">执行人</text>{{taskExcutive}}</view>
+							</picker>
+						</view>
+						<view class="input-item">
+							<picker class="picker-item" mode="date" @change="dateChange">
+								<view><text class="picker-label">截止日期</text>{{deadline}}</view>
+							</picker>
+						</view>
+					</view>
+                    
         			<view class="btn-group">
-        				<button class="btn-primary" @tap="addTask">决定</button>
+        				<button class="btn-primary" @tap="add">决定</button>
         				<button class="btn-default" @tap="closeAddDrawer">取消</button>
         			</view>
         		</view>
@@ -217,6 +226,8 @@
                 deadline: '',
                 
                 executiveList: [], // 执行人数组
+				typeList: ['任务','备忘'],
+				typeIndex: 0,
                 
                 // pop
                 showMask: false,
@@ -317,7 +328,85 @@
                     }
                 });
             },
+			add() {
+				if (this.typeIndex == 1) {
+					this.addTodo();
+				} else {
+					this.addTask();
+				}
+			},
+			addTodo() {
+				uni.request({
+					url: this.$requestUrl+'Task/add_todo',
+					method: 'POST',
+				    header: {
+				    	'content-type': 'application/x-www-form-urlencoded'
+				    },
+					data: {
+				        task_publisher_id: this.memberId,
+				        task_name: this.taskName,
+				        task_desc: this.taskDesc,
+				    },
+					success: res => {
+				        if (res.data.status == 1) {
+				            uni.showToast({
+				            	title: '发布备忘成功',
+				            	mask: false,
+				            	duration: 1500
+				            });
+				        	this.closeAddDrawer();
+							this.typeIndex = 0;
+				            this.getTask()
+				        } else {
+				            uni.showToast({
+				            	title: '发布备忘失败！',
+				                icon: 'none',
+				            	mask: false,
+				            	duration: 1500
+				            });
+				        }
+				    },
+					fail: () => {},
+					complete: () => {}
+				});
+			},
             addTask() {
+				if (this.taskName == '') {
+					uni.showToast({
+						title: '任务名称',
+						icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+					return;
+				}
+				if (this.taskExcutiveId == '') {
+					uni.showToast({
+						title: '执行人',
+						icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+					return;
+				}
+				if (this.rateIndex == '') {
+					uni.showToast({
+						title: '任务难度',
+						icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+					return;
+				}
+				if (this.deadline == '') {
+					uni.showToast({
+						title: '任务截至时间',
+						icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+					return;
+				}
                 uni.request({
                 	url: this.$requestUrl+'Task/add_task',
                 	method: 'POST',
@@ -449,11 +538,14 @@
             	this.addDrawerVisible = true;
                 this.getMembers();
             },
-            teamNameChange(e) {
-                this.teamName = e.detail.value;
+			typeChange(e) {
+				this.typeIndex = e.detail.value;
+			},
+            taskNameChange(e) {
+                this.taskName = e.detail.value;
             },
-            teamDescChange(e) {
-                this.teamDesc = e.detail.value;
+            taskDescChange(e) {
+                this.taskDesc = e.detail.value;
             },
             difficultChange(e) {
                 this.rateIndex = e.detail.index;
