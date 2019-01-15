@@ -79,7 +79,7 @@
 				<view class="task-header" v-show="item.list.length">
 					<view class="header-title">{{item.title}}</view>
 					<uni-badge :text="item.number_all" round type="warning"></uni-badge>
-					<view class="header-progress">
+					<view class="header-progress" v-if="type != 'todo'">
 						<progress :percent="item.rate" stroke-width="20" activeColor="#F8D053" />
 					</view>
 				</view>
@@ -109,7 +109,7 @@
 									<view class="badge-box">
 										<uni-badge v-if="task.is_delay" text="逾期" type="danger"></uni-badge>
 									</view>
-									<view class="rate-box">
+									<view class="rate-box" v-if="type != 'todo'">
 										<Rate disabled=true :value="task.difficult">
 										</Rate>
 									</view>
@@ -145,11 +145,11 @@
 					</view>
 					<view class="input-item">
 						<view class="input-label">名称</view>
-						<input type="text" @blur="taskNameChange" />
+						<input type="text" @input="taskNameChange" />
 					</view>
 					<view class="input-item">
 						<view class="input-label">描述</view>
-						<textarea auto-height @blur="taskDescChange" />
+						<textarea auto-height @input="taskDescChange" />
 					</view>
 					
 					<view v-if="typeIndex == 0">
@@ -320,6 +320,7 @@
                         this.taskData = listData;
                         this.taskData.today.title = '今日任务';
                         this.taskData.other.title = '其他任务';
+						this.taskData.todo.title = '备忘'
                     },
                 	fail: () => {},
                 	complete: () => {
@@ -335,12 +336,21 @@
 				}
 			},
 			addTodo() {
+				if (this.taskName == '') {
+					uni.showToast({
+						title: '任务名称',
+						icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+					return;
+				}
 				uni.request({
 					url: this.$requestUrl+'Task/add_todo',
 					method: 'POST',
-				    header: {
-				    	'content-type': 'application/x-www-form-urlencoded'
-				    },
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
 					data: {
 				        task_publisher_id: this.memberId,
 				        task_name: this.taskName,
@@ -443,18 +453,6 @@
                 	complete: () => {}
                 });
             },
-            finish(e){
-                let status = e.detail.value;
-                let taskId = e.detail.oid;
-                let type = e.detail.otype;
-                let index = e.detail.oindex;
-                this.taskData[type].list[index].is_finish = e.detail.value;
-                if (status) {
-                	this.completeTask(taskId);
-                } else {
-                	this.cancelTask(taskId);
-                }
-            },
 			trigerCollapse(type,index) {
 				for (let i = 0, len = this.taskData[type].list.length; i < len; ++i) {
 					if (index === i) {
@@ -463,6 +461,26 @@
 						this.taskData[type].list[i].show = false;
 					}
 				}
+			},
+			finish(e){
+			    let status = e.detail.value;
+			    let taskId = e.detail.oid;
+			    let type = e.detail.otype;
+			    let index = e.detail.oindex;
+			    this.taskData[type].list[index].is_finish = e.detail.value;
+			    if (status) {
+					if (type == 'todo') {
+						this.completeTodo(taskId);
+					} else{
+						this.completeTask(taskId);
+					}
+			    } else {
+					if (type == 'todo') {
+						this.cancelTodo(taskId);
+					} else{
+						this.cancelTask(taskId);
+					}
+			    }
 			},
             completeTask(taskId) {
                 uni.request({
@@ -482,12 +500,48 @@
                 	complete: () => {}
                 });
             },
+			completeTodo(id) {
+				uni.request({
+					url: this.$requestUrl+'Task/complete_todo',
+					method: 'GET',
+					data: {
+				        todo_id: id
+				    },
+					success: res => {
+				        uni.showToast({
+				        	title: '完成任务',
+				            icon: 'none'
+				        });
+				        this.getTask();
+				    },
+					fail: () => {},
+					complete: () => {}
+				});
+			},
             cancelTask(taskId) {
                 uni.request({
                 	url: this.$requestUrl+'Task/cancel_task',
                 	method: 'GET',
                 	data: {
                 		task_id: taskId
+                	},
+                	success: res => {
+                		uni.showToast({
+                			title: '取消完成任务',
+                			icon: 'none'
+                		});
+                        this.getTask();
+                	},
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
+            cancelTodo(id) {
+                uni.request({
+                	url: this.$requestUrl+'Task/cancel_todo',
+                	method: 'GET',
+                	data: {
+                		todo_id: id
                 	},
                 	success: res => {
                 		uni.showToast({
